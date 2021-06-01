@@ -1,13 +1,13 @@
 import 'package:admin/controllers/MenuController.dart';
 import 'package:admin/responsive.dart';
 import 'package:admin/screens/dashboard/dashboard_screen.dart';
+import 'package:admin/screens/main/components/side_menu.dart';
+import 'package:admin/screens/reseller/components/reseller_body.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'components/side_menu.dart';
-
-class MainScreen extends StatelessWidget {
-  static String routeName = "/dashboard_screen";
+class ResellerScreen extends StatelessWidget {
+  static String routeName = "/reseller_screen";
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class MainScreen extends StatelessWidget {
             Expanded(
               // It takes 5/6 part of the screen
               flex: 5,
-              child: DashboardScreen(),
+              child: ResellerBody(),
             ),
           ],
         ),

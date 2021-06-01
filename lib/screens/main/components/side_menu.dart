@@ -1,3 +1,8 @@
+import 'package:admin/orders/orders_screen.dart';
+import 'package:admin/screens/dashboard/dashboard_screen.dart';
+import 'package:admin/screens/main/main_screen.dart';
+import 'package:admin/screens/reseller/reseller_screen.dart';
+import 'package:admin/screens/user/user_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -17,24 +22,28 @@ class SideMenu extends StatelessWidget {
               child: Image.asset("assets/images/logo.png"),
             ),
             DrawerListTile(
-              title: "Dashbord",
+              title: "Dashboard",
               svgSrc: "assets/icons/menu_dashbord.svg",
-              press: () {},
+              press: ()=>
+                  Navigator.pushNamed(context, MainScreen.routeName),
             ),
             DrawerListTile(
-              title: "Transaction",
+              title: "Reseller",
               svgSrc: "assets/icons/menu_tran.svg",
-              press: () {},
+              press: () =>
+                  Navigator.pushNamed(context, ResellerScreen.routeName),
             ),
             DrawerListTile(
-              title: "Task",
+              title: "User",
               svgSrc: "assets/icons/menu_task.svg",
-              press: () {},
+              press: () =>
+                  Navigator.pushNamed(context, UserScreen.routeName),
             ),
             DrawerListTile(
-              title: "Documents",
+              title: "Orders",
               svgSrc: "assets/icons/menu_doc.svg",
-              press: () {},
+              press: () =>
+                  Navigator.pushNamed(context, OrderScreen.routeName),
             ),
             DrawerListTile(
               title: "Store",

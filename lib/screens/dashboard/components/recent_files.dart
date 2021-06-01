@@ -21,7 +21,7 @@ class RecentFiles extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Recent Files",
+            "Recent Orders",
             style: Theme.of(context).textTheme.subtitle1,
           ),
           SizedBox(
@@ -31,13 +31,16 @@ class RecentFiles extends StatelessWidget {
               columnSpacing: defaultPadding,
               columns: [
                 DataColumn(
-                  label: Text("File Name"),
+                  label: Text("Reseller"),
                 ),
                 DataColumn(
-                  label: Text("Date"),
+                  label: Text("Store ID"),
                 ),
                 DataColumn(
-                  label: Text("Size"),
+                  label: Text("User"),
+                ),
+                DataColumn(
+                  label: Text("Order Info ??"),
                 ),
               ],
               rows: List.generate(
@@ -71,6 +74,7 @@ DataRow recentFileDataRow(RecentFile fileInfo) {
         ),
       ),
       DataCell(Text(fileInfo.date)),
+      DataCell(Text(fileInfo.size)),
       DataCell(Text(fileInfo.size)),
     ],
   );
