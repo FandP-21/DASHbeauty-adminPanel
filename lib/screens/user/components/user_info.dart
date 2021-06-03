@@ -1,3 +1,4 @@
+import 'package:admin/models/AllUserResponseModel.dart';
 import 'package:admin/models/RecentFile.dart';
 import 'package:admin/responsive.dart';
 import 'package:flutter/material.dart';
@@ -96,14 +97,14 @@ class UserInfo extends StatelessWidget {
   }
 }
 
-DataRow recentFileDataRow(RecentFile fileInfo) {
+DataRow recentFileDataRow(UserResponseData fileInfo) {
   return DataRow(
     cells: [
       DataCell(
         Row(
           children: [
             SvgPicture.asset(
-              fileInfo.icon,
+              fileInfo.profilePic,
               height: 30,
               width: 30,
             ),
@@ -114,8 +115,8 @@ DataRow recentFileDataRow(RecentFile fileInfo) {
           ],
         ),
       ),
-      DataCell(Text(fileInfo.date)),
-      DataCell(Text(fileInfo.size)),
+      DataCell(Text(fileInfo.email)),
+      DataCell(Text(fileInfo.firstName)),
       ///Buttons
       DataCell(Container(
         height: 30,
@@ -148,9 +149,15 @@ DataRow recentFileDataRow(RecentFile fileInfo) {
             borderRadius: BorderRadius.circular(10),
             color: Colors.blueGrey
         ),
-        child: TextButton(
-          onPressed: (){},
-          child: Text("Delete",style: TextStyle(color: Colors.white),),
+        child: Switch(
+          value: true,
+          activeColor: Colors.blue,
+          onChanged: (value) {
+            print("VALUE : $value");
+            // setState(() {
+            //   isSwitched = value;
+            // });
+          },
         ),
       )),
 
