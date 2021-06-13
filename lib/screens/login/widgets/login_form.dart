@@ -100,6 +100,7 @@ class _LoginFormState extends State<LoginForm> {
                     if (value.isEmpty) {
                       return 'Please enter User Name!';
                     }
+                    return null;
                   },
                   cursorColor: Colors.white,
                   keyboardType: TextInputType.text,

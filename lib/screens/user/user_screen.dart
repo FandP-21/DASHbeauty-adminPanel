@@ -8,6 +8,7 @@ import 'package:admin/screens/dashboard/dashboard_screen.dart';
 import 'package:admin/screens/main/components/side_menu.dart';
 import 'package:admin/constants.dart' as Constants;
 import 'package:admin/screens/reseller/components/reseller_body.dart';
+import 'package:admin/screens/user/components/create_user_dialog.dart';
 import 'package:admin/screens/user/components/user_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -33,7 +34,7 @@ class _UserScreenState extends State<UserScreen> {
     _userBloc = UserBloc();
 
     _userBloc.getUsers(
-        UserRequest(limit: "10", page_no: "1", search: "", userRole: "2"));
+        UserRequest(limit: "10", page_no: "1", search: "", userRole: "3"));
 
     _userBloc.ordersStream.listen((event) {
       setState(() {
@@ -67,8 +68,8 @@ class _UserScreenState extends State<UserScreen> {
             break;
           case Status.COMPLETED:
             Constants.stopLoader(context);
-            _userBloc.getUsers(
-                UserRequest(limit: "10", page_no: "1", search: "", userRole: "2"));
+            _userBloc.getUsers(UserRequest(
+                limit: "10", page_no: "1", search: "", userRole: "2"));
 
             break;
           case Status.ERROR:
@@ -83,8 +84,83 @@ class _UserScreenState extends State<UserScreen> {
         }
       });
     });
+
+    _userBloc.deleteStream.listen((event) {
+      setState(() {
+        switch (event.status) {
+          case Status.LOADING:
+            Constants.onLoading(context);
+            break;
+          case Status.COMPLETED:
+            Constants.stopLoader(context);
+            _userBloc.getUsers(UserRequest(
+                limit: "10", page_no: "1", search: "", userRole: "2"));
+            break;
+          case Status.ERROR:
+            print(event.message);
+            Constants.stopLoader(context);
+            if (event.message == "Invalid Request: null") {
+              Constants.showMyDialog("Invalid Credentials.", context);
+            } else {
+              Constants.showMyDialog(event.message, context);
+            }
+            break;
+        }
+      });
+    });
+
     super.initState();
   }
+
+  void createUserDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+// return object of type Dialog
+        return AlertDialog(
+          title: Text("Create New User"),
+          content: CreateUserDialog(),
+
+        );
+      },
+    );
+  }
+
+/*  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: MenuController()
+          .scaffoldKey, //context.read<MenuController>().scaffoldKey,
+      drawer: SideMenu(),
+      floatingActionButton: new FloatingActionButton(
+          elevation: 0.0,
+          child: new Icon(Icons.add),
+          backgroundColor: new Color(0xFFE57373),
+          onPressed: () {
+            createUserDialog();
+          }),
+      body: SafeArea(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // We want this side menu only for large screen
+            if (Responsive.isDesktop(context))
+              Expanded(
+                // default flex = 1
+                // and it takes 1/6 part of the screen
+                child: SideMenu(),
+              ),
+            Expanded(
+              // It takes 5/6 part of the screen
+              flex: 5,
+              child: UserBody(_userBloc),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}*/
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +170,7 @@ class _UserScreenState extends State<UserScreen> {
           child: new Icon(Icons.add),
           backgroundColor: new Color(0xFFE57373),
           onPressed: () {
-
+            createUserDialog();
           }),
       key: MenuController().scaffoldKey,
       //context.read<MenuController>().scaffoldKey,
@@ -129,7 +205,7 @@ class _UserScreenState extends State<UserScreen> {
                               decoration: BoxDecoration(
                                 color: secondaryColor,
                                 borderRadius:
-                                    const BorderRadius.all(Radius.circular(10)),
+                                const BorderRadius.all(Radius.circular(10)),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,93 +213,102 @@ class _UserScreenState extends State<UserScreen> {
                                   Text(
                                     "User Information",
                                     style:
-                                        Theme.of(context).textTheme.subtitle1,
+                                    Theme
+                                        .of(context)
+                                        .textTheme
+                                        .subtitle1,
                                   ),
                                   Responsive.isDesktop(context)
                                       ? SizedBox(
-                                          width: double.infinity,
-                                          child: DataTable(
-                                            horizontalMargin: 0,
-                                            columnSpacing: defaultPadding,
-                                            columns: [
-                                              DataColumn(
-                                                label: Text("Email"),
-                                              ),
-                                              DataColumn(
-                                                label: Text("Password"),
-                                              ),
-                                              DataColumn(
-                                                label:
-                                                    Text("Attached Store ID"),
-                                              ),
-                                              DataColumn(
-                                                label: Text("Create User"),
-                                              ),
-                                              DataColumn(
-                                                label: Text("Update User Data"),
-                                              ),
-                                              DataColumn(
-                                                label: Text("Action"),
-                                              ),
-                                            ],
-                                            rows: List.generate(
-                                              ordersResponseData != null &&
-                                                      ordersResponseData.data !=
-                                                          null
-                                                  ? ordersResponseData
-                                                      .data.length
-                                                  : 0,
-                                              (index) => recentFileDataRow(
+                                    width: double.infinity,
+                                    child: DataTable(
+                                      horizontalMargin: 0,
+                                      columnSpacing: defaultPadding,
+                                      columns: [
+                                        DataColumn(
+                                          label: Text("Email"),
+                                        ),
+                                        DataColumn(
+                                          label: Text("Password"),
+                                        ),
+                                        DataColumn(
+                                          label:
+                                          Text("Attached Store ID"),
+                                        ),
+                                        DataColumn(
+                                          label: Text("Update User Data"),
+                                        ),
+                                        DataColumn(
+                                          label: Text("Action"),
+                                        ),
+                                        DataColumn(
+                                          label: Text("Delete User"),
+                                        ),
+                                      ],
+                                      rows: List.generate(
+                                        ordersResponseData != null &&
+                                            ordersResponseData.data !=
+                                                null
+                                            ? ordersResponseData
+                                            .data.length
+                                            : 0,
+                                            (index) =>
+                                            recentFileDataRow(
+                                                ordersResponseData
+                                                    .data[index]),
+                                      ),
+                                    ),
+                                  )
+                                      : SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: SizedBox(
+                                      //width: double.infinity,
+                                      child: DataTable(
+                                        horizontalMargin: 0,
+                                        columnSpacing: defaultPadding,
+                                        columns: [
+                                          DataColumn(
+                                            label: Text("Email"),
+                                          ),
+                                          DataColumn(
+                                            label: Text("Password"),
+                                          ),
+                                          DataColumn(
+                                            label:
+                                            Text("Attached Store ID"),
+                                          ),
+                                          DataColumn(
+                                            label: Text("Create User"),
+                                          ),
+                                          DataColumn(
+                                            label:
+                                            Text("Update User Data"),
+                                          ),
+                                          DataColumn(
+                                            label:
+                                            Text("Action"),
+                                          ),
+                                          DataColumn(
+                                            label:
+                                            Text("Delete User"),
+                                          ),
+                                        ],
+                                        rows: List.generate(
+                                          ordersResponseData != null &&
+                                              ordersResponseData
+                                                  .data !=
+                                                  null
+                                              ? ordersResponseData
+                                              .data.length
+                                              : 0,
+                                              (index) =>
+                                              recentFileDataRow(
                                                   ordersResponseData
                                                       .data[index]),
-                                            ),
-                                          ),
-                                        )
-                                      : SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: SizedBox(
-                                            //width: double.infinity,
-                                            child: DataTable(
-                                              horizontalMargin: 0,
-                                              columnSpacing: defaultPadding,
-                                              columns: [
-                                                DataColumn(
-                                                  label: Text("Email"),
-                                                ),
-                                                DataColumn(
-                                                  label: Text("Password"),
-                                                ),
-                                                DataColumn(
-                                                  label:
-                                                      Text("Attached Store ID"),
-                                                ),
-                                                DataColumn(
-                                                  label: Text("Create User"),
-                                                ),
-                                                DataColumn(
-                                                  label:
-                                                      Text("Update User Data"),
-                                                ),
-                                                DataColumn(
-                                                  label:
-                                                      Text("Action"),
-                                                ),
-                                              ],
-                                              rows: List.generate(
-                                                ordersResponseData != null &&
-                                                        ordersResponseData
-                                                                .data !=
-                                                            null
-                                                    ? ordersResponseData
-                                                        .data.length
-                                                    : 0,
-                                                (index) => recentFileDataRow(
-                                                    ordersResponseData
-                                                        .data[index]),
-                                              ),
-                                            ),
-                                          ),
                                         ),
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -251,22 +336,10 @@ class _UserScreenState extends State<UserScreen> {
     return DataRow(
       cells: [
         DataCell(
-          Row(
-            children: [
-              SvgPicture.asset(
-                fileInfo.profilePic,
-                height: 30,
-                width: 30,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-                child: Text("fileInfo.title"),
-              ),
-            ],
-          ),
+            Text(fileInfo.email)
         ),
         DataCell(Text(fileInfo.email)),
-        DataCell(Text(fileInfo.firstName)),
+        DataCell(Text(fileInfo.email)),
 
         ///Buttons
         DataCell(Container(
@@ -275,7 +348,9 @@ class _UserScreenState extends State<UserScreen> {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10), color: Colors.green),
           child: TextButton(
-            onPressed: () {},
+            onPressed: () {
+              createUserDialog();
+            },
             child: Text(
               "Create",
               style: TextStyle(color: Colors.white),
@@ -285,47 +360,30 @@ class _UserScreenState extends State<UserScreen> {
         DataCell(Container(
           height: 30,
           width: 80,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10), color: Colors.deepPurple),
-          child: TextButton(
-            onPressed: () {},
-            child: Text(
-              "Update",
-              style: TextStyle(color: Colors.white),
-            ),
+          child: FlutterSwitch(
+            width: 50.0,
+            height: 55.0,
+            valueFontSize: 25.0,
+            toggleSize: 45.0,
+            value: fileInfo.status == 1 ? true : false,
+            borderRadius: 30.0,
+            padding: 8.0,
+            showOnOff: true,
+            onToggle: (val) {
+              _userBloc.enableDisableUser(fileInfo.userId, val);
+              setState(() {
+                if (val) {
+                  fileInfo.status = 1;
+                } else {
+                  fileInfo.status = 0;
+                }
+              });
+            },
           ),
         )),
-        DataCell(Container(
-          height: 30,
-          width: 80,
-          child: Row(
-            children: [
-              FlutterSwitch(
-                width: 50.0,
-                height: 55.0,
-                valueFontSize: 25.0,
-                toggleSize: 45.0,
-                value: fileInfo.status == 1 ? true: false,
-                borderRadius: 30.0,
-                padding: 8.0,
-                showOnOff: true,
-                onToggle: (val) {
-                  _userBloc.enableDisableUser(fileInfo.userId, val);
-                  setState(() {
-                    if(val){
-                      fileInfo.status = 1;
-                    }else{
-                      fileInfo.status = 0;
-                    }
-                  });
-                },
-              ),
-              IconButton(onPressed: (){
-
-              }, icon:  Icon(Icons.delete))
-            ],
-          ),
-        )),
+        DataCell( IconButton(onPressed: () {
+          _userBloc.deleteUser(fileInfo.userId);
+        }, icon: Icon(Icons.delete)))
       ],
     );
   }

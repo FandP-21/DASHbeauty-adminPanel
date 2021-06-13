@@ -1,3 +1,4 @@
+import 'package:admin/blocks/UserBloc.dart';
 import 'package:admin/responsive.dart';
 import 'package:admin/screens/components/header.dart';
 import 'package:admin/screens/dashboard/components/recent_files.dart';
@@ -8,6 +9,9 @@ import 'package:flutter/material.dart';
 import '../../../constants.dart';
 
 class UserBody extends StatelessWidget {
+  UserBloc userBloc;
+  UserBody(this.userBloc);
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(

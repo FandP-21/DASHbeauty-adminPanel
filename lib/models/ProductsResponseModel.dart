@@ -170,5 +170,6 @@ class CreateProductRequest {
     data['keywords'] = this.keywords;
     data['categoryId'] = this.categoryId;
     data['resellerStoreId'] = this.resellerStoreId;
+    return data;
   }
 }

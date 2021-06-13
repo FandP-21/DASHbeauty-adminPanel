@@ -1,6 +1,7 @@
-import 'package:admin/orders/orders_screen.dart';
 import 'package:admin/screens/dashboard/dashboard_screen.dart';
 import 'package:admin/screens/main/main_screen.dart';
+import 'package:admin/screens/orders/orders_screen.dart';
+import 'package:admin/screens/products/product_screen.dart';
 import 'package:admin/screens/reseller/reseller_screen.dart';
 import 'package:admin/screens/user/user_screen.dart';
 import 'package:flutter/material.dart';
@@ -46,9 +47,10 @@ class SideMenu extends StatelessWidget {
                   Navigator.pushNamed(context, OrderScreen.routeName),
             ),
             DrawerListTile(
-              title: "Store",
+              title: "Products and Categories",
               svgSrc: "assets/icons/menu_store.svg",
-              press: () {},
+              press: () =>
+                  Navigator.pushNamed(context, ProductScreen.routeName),
             ),
             DrawerListTile(
               title: "Notification",

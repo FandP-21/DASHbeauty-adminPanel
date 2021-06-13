@@ -27,7 +27,7 @@ class UserRepository {
   }
 
   Future<UserResponseModel> createUser(CreateUserRequest userRequest) async {
-    final response = await _apiProvider.post(Constants.CREATE_USER, jsonEncode(userRequest));
+    final response = await _apiProvider.postWithToken(Constants.CREATE_USER, jsonEncode(userRequest));
     return UserResponseModel.fromJson(response);
   }
 

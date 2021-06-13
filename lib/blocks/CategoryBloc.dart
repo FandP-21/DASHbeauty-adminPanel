@@ -51,7 +51,7 @@ class CategoryBloc {
 
   //to get all Category with pagination and search filter
   getCategory([UserRequest userRequest]) async {
-    categoryDataSink.add(Response.loading('get users'));
+    categoryDataSink.add(Response.loading('get categories'));
     try {
       CategoryResponseModel ordersResponseData =
       await _categoryRepository.getAllCategory(userRequest);

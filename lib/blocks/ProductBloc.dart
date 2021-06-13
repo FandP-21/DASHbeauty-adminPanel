@@ -50,7 +50,7 @@ class ProductBloc {
 
   //to get all products with pagination and search filter
   getProducts([UserRequest userRequest]) async {
-    productDataSink.add(Response.loading('get users'));
+    productDataSink.add(Response.loading('get products'));
     try {
       ProductsResponseModel ordersResponseData =
       await _productRepository.getAllProduct(userRequest);

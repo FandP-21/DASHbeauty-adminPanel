@@ -17,16 +17,19 @@ class UserInfo extends StatelessWidget {
       padding: EdgeInsets.all(defaultPadding),
       decoration: BoxDecoration(
         color: secondaryColor,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        borderRadius:
+        const BorderRadius.all(Radius.circular(10)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "User Information",
-            style: Theme.of(context).textTheme.subtitle1,
+            style:
+            Theme.of(context).textTheme.subtitle1,
           ),
-          Responsive.isDesktop(context) ? SizedBox(
+          Responsive.isDesktop(context)
+              ? SizedBox(
             width: double.infinity,
             child: DataTable(
               horizontalMargin: 0,
@@ -39,7 +42,8 @@ class UserInfo extends StatelessWidget {
                   label: Text("Password"),
                 ),
                 DataColumn(
-                  label: Text("Attached Store ID"),
+                  label:
+                  Text("Attached Store ID"),
                 ),
                 DataColumn(
                   label: Text("Create User"),
@@ -48,7 +52,7 @@ class UserInfo extends StatelessWidget {
                   label: Text("Update User Data"),
                 ),
                 DataColumn(
-                  label: Text("Delete User Data"),
+                  label: Text("Action"),
                 ),
               ],
               rows: List.generate(
@@ -56,8 +60,8 @@ class UserInfo extends StatelessWidget {
                     (index) => recentFileDataRow(demoRecentFiles[index]),
               ),
             ),
-          ) :
-          SingleChildScrollView(
+          )
+              : SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: SizedBox(
               //width: double.infinity,
@@ -72,16 +76,19 @@ class UserInfo extends StatelessWidget {
                     label: Text("Password"),
                   ),
                   DataColumn(
-                    label: Text("Attached Store ID"),
+                    label:
+                    Text("Attached Store ID"),
                   ),
                   DataColumn(
                     label: Text("Create User"),
                   ),
                   DataColumn(
-                    label: Text("Update User Data"),
+                    label:
+                    Text("Update User Data"),
                   ),
                   DataColumn(
-                    label: Text("Delete User Data"),
+                    label:
+                    Text("Action"),
                   ),
                 ],
                 rows: List.generate(
@@ -99,6 +106,7 @@ class UserInfo extends StatelessWidget {
 
 DataRow recentFileDataRow(UserResponseData fileInfo) {
   return DataRow(
+    selected: false,
     cells: [
       DataCell(
         Row(
@@ -119,46 +127,20 @@ DataRow recentFileDataRow(UserResponseData fileInfo) {
       DataCell(Text(fileInfo.firstName)),
       ///Buttons
       DataCell(Container(
-        height: 30,
-        width: 80,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.green
-        ),
-        child: TextButton(
-          onPressed: (){},
-          child: Text("Create", style: TextStyle(color: Colors.white),),
-        ),
-      )),
-      DataCell(Container(
-        height: 30,
-        width: 80,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.deepPurple
-        ),
-        child: TextButton(
-          onPressed: (){},
-          child: Text("Update",style: TextStyle(color: Colors.white),),
-        ),
-      )),
-      DataCell(Container(
-        height: 30,
-        width: 80,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.blueGrey
-        ),
-        child: Switch(
-          value: true,
-          activeColor: Colors.blue,
-          onChanged: (value) {
-            print("VALUE : $value");
-            // setState(() {
-            //   isSwitched = value;
-            // });
-          },
-        ),
+          height: 30,
+          //width: 80,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.deepPurple
+          ),
+          child: DropdownButton(
+            value: 1,
+            items: [
+              DropdownMenuItem(child: Text("Order Processed"), value: 1,),
+              DropdownMenuItem(child: Text("Order Shipped"), value: 2,),
+              DropdownMenuItem(child: Text("Order Delivered"), value: 3,),
+            ],
+          )
       )),
 
     ],

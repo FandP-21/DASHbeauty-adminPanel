@@ -9,8 +9,8 @@ const bgColor = Color(0xFF212332);
 
 const defaultPadding = 16.0;
 
-var baseUrl = 'https://337a6c0d7f46.ngrok.io';
-
+var baseUrl = "http://35.183.182.55:3000"; //'https://337a6c0d7f46.ngrok.io';
+//    android:usesCleartextTraffic="true"
 const String AUTHTOKEN = "auth_token";
 
 const String NO_INTERNET = "No Internet";
@@ -36,6 +36,20 @@ const String GET_ALL_PRODUCTS = "/v1/products"; //List products by admin and res
 const String CREATE_PRODUCTS = "/v1/products"; //Create new products by admin and reseller
 const String DELETE_PRODUCTS = "/v1/products/"; //Delete products by admin and reseller
 const String UPDATE_PRODUCTS = "/v1/products/"; //update products by admin and reseller
+
+// Form Error
+final RegExp emailValidatorRegExp =
+RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+const String kEmailNullError = "Please Enter your email";
+const String kInvalidEmailError = "Please Enter Valid Email";
+const String kPassNullError = "Please Enter your password";
+const String kShortPassError = "Password is too short (minimum 8 letters)";
+const String kMatchPassError = "Passwords don't match";
+const String kNamelNullError = "Please Enter your name";
+const String kPhoneNumberNullError = "Please Enter your phone number";
+const String kAddressNullError = "Please Enter your address";
+
+const kPrimaryColor = Color(0xFFFF7643);
 
 
 void onLoading(BuildContext context) {

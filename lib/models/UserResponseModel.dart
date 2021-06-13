@@ -110,3 +110,40 @@ class UserResponseModel {
     "updatedDate": updatedDate.toIso8601String(),
   };
 }
+
+class CreateUserRequest {
+  String first_name;
+  String last_name;
+  String email;
+  int user_type; //send 2 for reseller, 3 for normal user
+  String confirm_password;
+  String password;
+
+  CreateUserRequest(
+      {this.first_name,
+        this.last_name,
+        this.email,
+        this.user_type,
+        this.confirm_password,
+        this.password});
+
+  CreateUserRequest.fromJson(Map<String, dynamic> json) {
+    first_name = json['first_name'];
+    last_name = json['last_name'];
+    email = json['email'];
+    user_type = json['user_type'];
+    confirm_password = json['confirm_password'];
+    password = json['password'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['first_name'] = this.first_name;
+    data['last_name'] = this.last_name;
+    data['email'] = this.email;
+    data['user_type'] = this.user_type;
+    data['confirm_password'] = this.confirm_password;
+    data['password'] = this.password;
+    return data;
+  }
+}
