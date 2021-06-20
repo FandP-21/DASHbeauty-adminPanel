@@ -9,7 +9,7 @@ const bgColor = Color(0xFF212332);
 
 const defaultPadding = 16.0;
 
-var baseUrl = "http://35.183.182.55:3000"; //'https://337a6c0d7f46.ngrok.io';
+var baseUrl = "https://api.dashbeautyshop.com";//"http://35.183.182.55:3000"; //'https://337a6c0d7f46.ngrok.io';
 //    android:usesCleartextTraffic="true"
 const String AUTHTOKEN = "auth_token";
 

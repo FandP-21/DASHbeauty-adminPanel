@@ -1,6 +1,7 @@
 import 'package:admin/screens/dashboard/dashboard_screen.dart';
 import 'package:admin/screens/main/main_screen.dart';
 import 'package:admin/screens/orders/orders_screen.dart';
+import 'package:admin/screens/products/category_screen.dart';
 import 'package:admin/screens/products/product_screen.dart';
 import 'package:admin/screens/reseller/reseller_screen.dart';
 import 'package:admin/screens/user/user_screen.dart';
@@ -47,15 +48,15 @@ class SideMenu extends StatelessWidget {
                   Navigator.pushNamed(context, OrderScreen.routeName),
             ),
             DrawerListTile(
-              title: "Products and Categories",
+              title: "Products",
               svgSrc: "assets/icons/menu_store.svg",
               press: () =>
                   Navigator.pushNamed(context, ProductScreen.routeName),
             ),
             DrawerListTile(
-              title: "Notification",
+              title: "Categories",
               svgSrc: "assets/icons/menu_notification.svg",
-              press: () {},
+              press: () => Navigator.pushNamed(context, CategoryScreen.routeName),
             ),
             DrawerListTile(
               title: "Profile",

@@ -68,7 +68,7 @@ class CategoryBloc {
 
 
   //to create new Category
-  createProduct(CreateUserRequest createProductRequest) async {
+  createCategory(CreateUserRequest createProductRequest) async {
 
     createCategoryDataSink.add(Response.loading('create user'));
     try {
@@ -104,7 +104,7 @@ class CategoryBloc {
 
 
   //to update Category
-  updateProduct(String userId, CreateProductRequest updateProductRequest) async {
+  updateCategory(String userId, CreateProductRequest updateProductRequest) async {
 
     updateCategoryDataSink.add(Response.loading('Update category'));
     // try {

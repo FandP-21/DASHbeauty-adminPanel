@@ -26,14 +26,11 @@ class ProductScreen extends StatefulWidget {
 class _ProductScreenState extends State<ProductScreen> {
 
   ProductBloc _bloc;
-  CategoryBloc _categoryBloc;
   ProductsResponseModel _productsResponseModel;
-  CategoryResponseModel _categoryResponseModel;
 
   @override
   void initState() {
     _bloc = ProductBloc();
-    _categoryBloc = CategoryBloc();
 
     _bloc.getProducts(
         UserRequest(limit: "10", page_no: "1", search: ""));
@@ -62,33 +59,6 @@ class _ProductScreenState extends State<ProductScreen> {
       });
     });
 
-    ///Get Category
-    _categoryBloc.getCategory(
-        UserRequest(limit: "10", page_no: "1", search: ""));
-
-    _categoryBloc.categoryStream.listen((event) {
-      setState(() {
-        switch (event.status) {
-          case Status.LOADING:
-            Constants.onLoading(context);
-            break;
-          case Status.COMPLETED:
-            Constants.stopLoader(context);
-            _categoryResponseModel = event.data;
-
-            break;
-          case Status.ERROR:
-            print(event.message);
-            Constants.stopLoader(context);
-            if (event.message == "Invalid Request: null") {
-              Constants.showMyDialog("Invalid Credentials.", context);
-            } else {
-              Constants.showMyDialog(event.message, context);
-            }
-            break;
-        }
-      });
-    });
     super.initState();
   }
 
@@ -117,15 +87,6 @@ class _ProductScreenState extends State<ProductScreen> {
                   child: Column(
                     children: [
                       Header("Products and Categories", Container()),
-                      SizedBox(height: defaultPadding),
-                      Wrap(
-                        children: [
-                          for(var i=0; i<_categoryResponseModel.data.length;i++)
-                          CategoryBox(_categoryResponseModel.data[i].name, _categoryResponseModel.data[i].image),
-                          CategoryBox("_categoryResponseModel.data[i].name", "categoryResponseModel.data[i].image"),
-                          CategoryBox("_categoryResponseModel.data[i].name", "_categoryResponseModel.data[i].image"),
-                        ],
-                      ),
                       SizedBox(height: defaultPadding),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
