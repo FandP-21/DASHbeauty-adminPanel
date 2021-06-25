@@ -32,7 +32,6 @@ class _OrderScreenState extends State<OrderScreen> {
     _bloc.getProducts(
         UserRequest(limit: "10", page_no: "1", search: ""));
 
-    _bloc.getProducts();
 
     _bloc.productStream.listen((event) {
       setState(() {

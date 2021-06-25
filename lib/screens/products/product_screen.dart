@@ -131,7 +131,8 @@ class _ProductScreenState extends State<ProductScreen> {
                                             ),
 
                                           ],
-                                          rows: List.generate(_productsResponseModel.data.length,
+                                          rows: List.generate(_productsResponseModel !=null && _productsResponseModel.data !=null?
+                                          _productsResponseModel.data.length : 0,
                                                 (index) => recentFileDataRow(_productsResponseModel.data[index]),
                                           ),
                                         ),
@@ -161,7 +162,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                               ),
                                             ],
                                             rows: List.generate(
-                                              _productsResponseModel.data.length,
+                                              _productsResponseModel !=null && _productsResponseModel.data !=null? _productsResponseModel.data.length:0 ,
                                                   (index) => recentFileDataRow(_productsResponseModel.data[index]),
                                             ),
                                           ),

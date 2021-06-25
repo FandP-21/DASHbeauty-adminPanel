@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:admin/networking/CustomException.dart';
 import 'dart:io' show Platform;
+import 'package:http_parser/http_parser.dart';
 
 class ApiProvider{
 
@@ -131,6 +132,35 @@ class ApiProvider{
       print(responseJson);
     } on SocketException {
       throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
+  Future<dynamic> multipartPostAPI(
+      String url, List<int> _imageData, String _fileName, String _name) async {
+    var responseJson;
+    try {
+      var token = await getAuthToken();
+      Map<String, String> headers = {"Authorization": "Bearer " + token};
+      var request = http.MultipartRequest(
+          'POST',
+          Uri.parse(
+            Constants.baseUrl + url,
+          ));
+      request.headers.addAll(headers);
+      request.files.add(http.MultipartFile.fromBytes("file", _imageData,
+          filename: _fileName, contentType: new MediaType('image', 'jpeg')));
+
+
+      request.fields["name"] = _name.toString();
+
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      responseJson = _response(response);
+      print(response.statusCode);
+    } on SocketException {
+      throw NoInternetException(Constants.NO_INTERNET);
     }
     return responseJson;
   }

@@ -8,7 +8,6 @@ import 'package:admin/screens/components/form_error.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:admin/constants.dart' as Constants;
-import 'package:image_picker_web_redux/image_picker_web_redux.dart';
 import '../../../constants.dart';
 import '../../../size_config.dart';
 
@@ -43,7 +42,7 @@ class _UpdateCategoryDialogState extends State<UpdateCategoryDialog> {
 
   Future<void> pickImage() async {
 
-    fromPicker = await ImagePickerWeb.getImage(outputType: ImageType.widget);
+    // fromPicker = await ImagePickerWeb.getImage(outputType: ImageType.widget);
 
   }
 
