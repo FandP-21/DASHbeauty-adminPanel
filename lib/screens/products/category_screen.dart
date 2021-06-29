@@ -190,8 +190,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
               IconButton(onPressed: (){
                 getImage();
-              }, icon: Icon( Icons.add_photo_alternate, color: Colors.red,))
-
+              }, icon: Icon( Icons.add_photo_alternate, color: Colors.red,)),
+              DefaultButton(
+                text: "${isCreate ? 'Create New' : 'Update' } Category",
+                press: () => validateInputs(true)
+              ),
               // DefaultButton(
               //   text: "Image",
               //   press:()=> getImage(),
@@ -228,9 +231,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
       } else {
 
         if(isCreate){
-          // _categoryBloc.createCategory();
+          _categoryBloc.createCategory();
         }else{
-          // _categoryBloc.updateCategory();
+          _categoryBloc.updateCategory();
         }
 
 

@@ -42,7 +42,7 @@ class _UserScreenState extends State<UserScreen> {
   _passwordValidation= false,
   _confirmPasswordValidation= false;
 
-  AllUserResponseModel ordersResponseData;
+  AllUserResponseModel userResponseData;
 
   int _limit = 10, _pageNo = 1;
 
@@ -53,7 +53,7 @@ class _UserScreenState extends State<UserScreen> {
     _userBloc.getUsers(
         UserRequest(limit: "$_limit", page_no: "$_pageNo", search: "", userRole: "3"));
 
-    _userBloc.ordersStream.listen((event) {
+    _userBloc.userStream.listen((event) {
       setState(() {
         switch (event.status) {
           case Status.LOADING:
@@ -61,7 +61,7 @@ class _UserScreenState extends State<UserScreen> {
             break;
           case Status.COMPLETED:
             Constants.stopLoader(context);
-            ordersResponseData = event.data;
+            userResponseData = event.data;
 
             break;
           case Status.ERROR:
@@ -86,7 +86,7 @@ class _UserScreenState extends State<UserScreen> {
           case Status.COMPLETED:
             Constants.stopLoader(context);
             _userBloc.getUsers(UserRequest(
-                limit: "10", page_no: "1", search: "", userRole: "2"));
+                limit: "10", page_no: "1", search: "", userRole: "3"));
 
             break;
           case Status.ERROR:
@@ -102,7 +102,7 @@ class _UserScreenState extends State<UserScreen> {
       });
     });
 
-    _userBloc.deleteStream.listen((event) {
+    _userBloc.deleteUserStream.listen((event) {
       setState(() {
         switch (event.status) {
           case Status.LOADING:
@@ -111,7 +111,7 @@ class _UserScreenState extends State<UserScreen> {
           case Status.COMPLETED:
             Constants.stopLoader(context);
             _userBloc.getUsers(UserRequest(
-                limit: "10", page_no: "1", search: "", userRole: "2"));
+                limit: "10", page_no: "1", search: "", userRole: "3"));
             break;
           case Status.ERROR:
             print(event.message);
@@ -403,9 +403,6 @@ class _UserScreenState extends State<UserScreen> {
                                                     Text("Attached Store ID"),
                                               ),
                                               DataColumn(
-                                                label: Text("Update User Data"),
-                                              ),
-                                              DataColumn(
                                                 label: Text("Action"),
                                               ),
                                               DataColumn(
@@ -413,14 +410,14 @@ class _UserScreenState extends State<UserScreen> {
                                               ),
                                             ],
                                             rows: List.generate(
-                                              ordersResponseData != null &&
-                                                      ordersResponseData.data !=
+                                              userResponseData != null &&
+                                                      userResponseData.data !=
                                                           null
-                                                  ? ordersResponseData
+                                                  ? userResponseData
                                                       .data.length
                                                   : 0,
                                               (index) => recentFileDataRow(
-                                                  ordersResponseData
+                                                  userResponseData
                                                       .data[index]),
                                             ),
                                           ),
@@ -458,15 +455,15 @@ class _UserScreenState extends State<UserScreen> {
                                                 ),
                                               ],
                                               rows: List.generate(
-                                                ordersResponseData != null &&
-                                                        ordersResponseData
+                                                userResponseData != null &&
+                                                        userResponseData
                                                                 .data !=
                                                             null
-                                                    ? ordersResponseData
+                                                    ? userResponseData
                                                         .data.length
                                                     : 0,
                                                 (index) => recentFileDataRow(
-                                                    ordersResponseData
+                                                    userResponseData
                                                         .data[index]),
                                               ),
                                             ),
@@ -501,22 +498,6 @@ class _UserScreenState extends State<UserScreen> {
         DataCell(Text(fileInfo.email)),
         DataCell(Text(fileInfo.email)),
 
-        ///Buttons
-        DataCell(Container(
-          height: 30,
-          width: 80,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10), color: Colors.green),
-          child: TextButton(
-            onPressed: () {
-              createUserDialog();
-            },
-            child: Text(
-              "Create",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        )),
         DataCell(Container(
           height: 30,
           width: 80,

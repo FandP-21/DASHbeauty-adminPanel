@@ -33,7 +33,7 @@ class _ResellerScreenState extends State<ResellerScreen> {
         search: "",
         userRole: "2")); //User type: 2 for reseller, 3 for normal user
 
-    _userBloc.ordersStream.listen((event) {
+    _userBloc.userStream.listen((event) {
       setState(() {
         switch (event.status) {
           case Status.LOADING:
@@ -82,7 +82,7 @@ class _ResellerScreenState extends State<ResellerScreen> {
       });
     });
 
-    _userBloc.deleteStream.listen((event) {
+    _userBloc.deleteUserStream.listen((event) {
       setState(() {
         switch (event.status) {
           case Status.LOADING:

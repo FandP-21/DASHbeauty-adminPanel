@@ -9,9 +9,9 @@ class UserBloc {
 
   //get all user
   StreamController _UserBlocController;
-  StreamSink<Response<AllUserResponseModel>> get ordersDataSink =>
+  StreamSink<Response<AllUserResponseModel>> get userDataSink =>
       _UserBlocController.sink;
-  Stream<Response<AllUserResponseModel>> get ordersStream =>
+  Stream<Response<AllUserResponseModel>> get userStream =>
       _UserBlocController.stream;
 
 
@@ -26,7 +26,7 @@ class UserBloc {
   StreamController _deleteUserController;
   StreamSink<Response<UserResponseModel>> get deleteDataSink =>
       _deleteUserController.sink;
-  Stream<Response<UserResponseModel>> get deleteStream =>
+  Stream<Response<UserResponseModel>> get deleteUserStream =>
       _deleteUserController.stream;
 
 
@@ -47,15 +47,15 @@ class UserBloc {
   }
 
   getUsers(UserRequest userRequest) async {
-    ordersDataSink.add(Response.loading('get users'));
+    userDataSink.add(Response.loading('get users'));
     try {
       AllUserResponseModel ordersResponseData =
           await _UserRepository.getAllUser(userRequest);
       print(ordersResponseData);
 
-      ordersDataSink.add(Response.completed(ordersResponseData));
+      userDataSink.add(Response.completed(ordersResponseData));
     } catch (e) {
-      ordersDataSink.add(Response.error(e.toString()));
+      userDataSink.add(Response.error(e.toString()));
       print(e);
     }
     return null;
