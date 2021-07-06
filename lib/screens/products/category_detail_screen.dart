@@ -11,19 +11,23 @@ import 'package:admin/screens/components/default_button.dart';
 import 'package:admin/screens/components/header.dart';
 import 'package:admin/screens/main/components/side_menu.dart';
 import 'package:admin/screens/products/components/category_box.dart';
+import 'package:admin/screens/products/components/create_category_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:admin/constants.dart' as Constants;
+import 'package:image_picker/image_picker.dart';
 import '../../constants.dart';
 
-class ProductScreen extends StatefulWidget {
-  static String routeName = "/product_screen";
+class CategoryDetailScreen extends StatefulWidget {
+  static String routeName = "/category_screen";
+  Datum data;
+  CategoryDetailScreen(this.data);
 
   @override
-  _ProductScreenState createState() => _ProductScreenState();
+  _CategoryDetailScreenState createState() => _CategoryDetailScreenState();
 }
 
-class _ProductScreenState extends State<ProductScreen> {
+class _CategoryDetailScreenState extends State<CategoryDetailScreen> {
   ProductBloc _productBloc;
   ProductsResponseModel _productsResponseModel;
   TextEditingController _productName = new TextEditingController(text: "");
@@ -37,7 +41,7 @@ class _ProductScreenState extends State<ProductScreen> {
   void initState() {
     _productBloc = ProductBloc();
 
-    _productBloc.getProducts(UserRequest(limit: "10", page_no: "1", search: ""));
+    _productBloc.getProducts(UserRequest(limit: "10", page_no: "1", search: widget.data.name));
 
     _productBloc.productStream.listen((event) {
       setState(() {
@@ -45,6 +49,7 @@ class _ProductScreenState extends State<ProductScreen> {
           case Status.LOADING:
             Constants.onLoading(context);
             break;
+
           case Status.COMPLETED:
             Constants.stopLoader(context);
             _productsResponseModel = event.data;
@@ -73,32 +78,7 @@ class _ProductScreenState extends State<ProductScreen> {
           case Status.COMPLETED:
             Constants.stopLoader(context);
             Navigator.pop(context);
-            _productBloc.getProducts(UserRequest(limit: "10", page_no: "1", search: ""));
-            break;
-          case Status.ERROR:
-            print(event.message);
-            Constants.stopLoader(context);
-            if (event.message == "Invalid Request: null") {
-              Constants.showMyDialog("Invalid Credentials.", context);
-            } else {
-              Constants.showMyDialog(event.message, context);
-            }
-            break;
-        }
-      });
-    });
-
-    ///Update product
-    _productBloc.updateProductStream.listen((event) {
-      setState(() {
-        switch (event.status) {
-          case Status.LOADING:
-            Constants.onLoading(context);
-            break;
-          case Status.COMPLETED:
-            Constants.stopLoader(context);
-            Navigator.pop(context);
-            _productBloc.getProducts(UserRequest(limit: "10", page_no: "1", search: ""));
+            _productBloc.getProducts(UserRequest(limit: "10", page_no: "1", search: widget.data.name));
             break;
           case Status.ERROR:
             print(event.message);
@@ -115,7 +95,7 @@ class _ProductScreenState extends State<ProductScreen> {
     super.initState();
   }
 
-  void validateInputs(bool isCreate, ProductResponseModel fileInfo) {
+  void validateInputs(bool isCreate) {
     setState(() {
       if (_productName.text.isEmpty) {
         _productValidation = true;
@@ -123,22 +103,15 @@ class _ProductScreenState extends State<ProductScreen> {
 
         if(isCreate){
           _productBloc.createProduct(CreateProductRequest(
-              categoryId: _productCategoryID.text,
-          description: _productDescription.text ,
-          keywords: _productKeyword.text,
-          name: _productName.text,
-          price: _productPrice.text,
-          quantity: _productQuantity.text,
-          ));
-        }else{
-          _productBloc.updateProduct(fileInfo.id, CreateProductRequest(
-            categoryId: _productCategoryID.text,
+            categoryId: widget.data.id.toString(),
             description: _productDescription.text ,
             keywords: _productKeyword.text,
             name: _productName.text,
             price: _productPrice.text,
             quantity: _productQuantity.text,
           ));
+        }else{
+          // _categoryBloc.updateCategory();
         }
 
 
@@ -149,11 +122,11 @@ class _ProductScreenState extends State<ProductScreen> {
 
   }
 
-  void createProductDialog(bool isCreate, ProductResponseModel fileInfo) {
+  void createProductDialog(bool isCreate) {
     _productName.text = "";
     _productPrice.text = "";
     _productQuantity.text = "";
-    _productCategoryID.text = "";
+    _productCategoryID.text = widget.data.id.toString();
     _productDescription.text = "";
     _productKeyword.text = "";
 
@@ -173,7 +146,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: isCreate ?"Product Name":fileInfo.name,
+                    labelText: "Product Name",
                     hintText: "Enter Product Name",
                     errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
                   ),
@@ -187,8 +160,8 @@ class _ProductScreenState extends State<ProductScreen> {
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: isCreate ?"Product Category": fileInfo.categoryId.toString(),
-                    hintText: "Enter Product Category ID",
+                    labelText: widget.data.name,
+                    hintText: "Product Category ID",
                     errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
                   ),
                   textInputAction: TextInputAction.next,
@@ -204,7 +177,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText:isCreate ? "Product Price":fileInfo.price.toString(),
+                          labelText: "Product Price",
                           hintText: "Enter Product Price",
                           errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
                         ),
@@ -220,7 +193,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: isCreate ?"Product Quantity":fileInfo.quantity.toString(),
+                          labelText: "Product Quantity",
                           hintText: "Enter Product Quantity",
                           errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
                         ),
@@ -231,7 +204,21 @@ class _ProductScreenState extends State<ProductScreen> {
                 ],
               ),
 
-              
+              Padding(
+                padding: EdgeInsets.all(15),
+                child: TextField(
+                  controller: _productKeyword,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Product Keyword",
+                    hintText: "Enter Keyword for better search",
+                    errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
+                  ),
+                  textInputAction: TextInputAction.next,
+                ),
+              ),
 
               Padding(
                 padding: EdgeInsets.all(15),
@@ -241,7 +228,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   maxLines: null,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: isCreate ?"Product Description":fileInfo.description,
+                    labelText: "Product Description",
                     hintText: "Enter Product Description",
                     errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
                   ),
@@ -249,25 +236,9 @@ class _ProductScreenState extends State<ProductScreen> {
                 ),
               ),
 
-              Padding(
-                padding: EdgeInsets.all(15),
-                child: TextField(
-                  controller: _productKeyword,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: isCreate ?"Product Keyword":fileInfo.keywords,
-                    hintText: "Enter Keyword for better search",
-                    errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
-                  ),
-                  textInputAction: TextInputAction.next,
-                ),
-              ),
-
               DefaultButton(
-                text: isCreate ? 'Add' : 'Update' +" Product",
-                press: () => validateInputs(isCreate ?true:false,isCreate ?null:fileInfo),
+                text: "Add Product",//isCreate ? 'Add' : 'Update' +
+                press: () => validateInputs(true),
               ),
 
             ],
@@ -286,9 +257,10 @@ class _ProductScreenState extends State<ProductScreen> {
           child: new Icon(Icons.add),
           backgroundColor: new Color(0xFFE57373),
           onPressed: () {
-            createProductDialog(true,null);
+            createProductDialog(true);
           }),
       drawer: SideMenu(),
+
       body: SafeArea(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -308,7 +280,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   padding: EdgeInsets.all(defaultPadding),
                   child: Column(
                     children: [
-                      Header("Products", Container()),
+                      Header("Category ${widget.data.name}'s Detail", Container()),
                       SizedBox(height: defaultPadding),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,7 +298,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                   ),
                                   child: Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         "Product Information",
@@ -336,86 +308,86 @@ class _ProductScreenState extends State<ProductScreen> {
                                       ),
                                       Responsive.isDesktop(context)
                                           ? SizedBox(
-                                              width: double.infinity,
-                                              child: DataTable(
-                                                horizontalMargin: 0,
-                                                columnSpacing: defaultPadding,
-                                                columns: [
-                                                  DataColumn(
-                                                    label: Text("Product"),
-                                                  ),
-                                                  DataColumn(
-                                                    label: Text("Product Quantity"),
-                                                  ),
-                                                  DataColumn(
-                                                    label: Text(
-                                                        "Product Price"),
-                                                  ),
-                                                  DataColumn(
-                                                    label: Text("Product's Category"),
-                                                  ),
-                                                  DataColumn(
-                                                    label: Text(
-                                                        "Update Product Detail"),
-                                                  ),
-                                                ],
-                                                rows: List.generate(
-                                                  _productsResponseModel !=
-                                                              null &&
-                                                          _productsResponseModel
-                                                                  .data !=
-                                                              null
-                                                      ? _productsResponseModel
-                                                          .data.length
-                                                      : 0,
-                                                  (index) => recentFileDataRow(
-                                                      _productsResponseModel
-                                                          .data[index]),
-                                                ),
-                                              ),
-                                            )
-                                          : SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: SizedBox(
-                                                //width: double.infinity,
-                                                child: DataTable(
-                                                  horizontalMargin: 0,
-                                                  columnSpacing: defaultPadding,
-                                                  columns: [
-                                                    DataColumn(
-                                                      label: Text("Product"),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Text("Product Quantity"),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Text(
-                                                          "Product Price"),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Text("Product's Category"),
-                                                    ),
-                                                    DataColumn(
-                                                      label: Text(
-                                                          "Update Product Detail"),
-                                                    ),
-                                                  ],
-                                                  rows: List.generate(
-                                                    _productsResponseModel !=
-                                                                null &&
-                                                            _productsResponseModel
-                                                                    .data !=
-                                                                null
-                                                        ? _productsResponseModel
-                                                            .data.length
-                                                        : 0,
-                                                    (index) => recentFileDataRow(
-                                                        _productsResponseModel
-                                                            .data[index]),
-                                                  ),
-                                                ),
-                                              ),
+                                        width: double.infinity,
+                                        child: DataTable(
+                                          horizontalMargin: 0,
+                                          columnSpacing: defaultPadding,
+                                          columns: [
+                                            DataColumn(
+                                              label: Text("Product"),
                                             ),
+                                            DataColumn(
+                                              label: Text("Product Quantity"),
+                                            ),
+                                            DataColumn(
+                                              label: Text(
+                                                  "Product Price"),
+                                            ),
+                                            DataColumn(
+                                              label: Text("Product's Category"),
+                                            ),
+                                            DataColumn(
+                                              label: Text(
+                                                  "Update Product Detail"),
+                                            ),
+                                          ],
+                                          rows: List.generate(
+                                            _productsResponseModel !=
+                                                null &&
+                                                _productsResponseModel
+                                                    .data !=
+                                                    null
+                                                ? _productsResponseModel
+                                                .data.length
+                                                : 0,
+                                                (index) => recentFileDataRow(
+                                                _productsResponseModel
+                                                    .data[index]),
+                                          ),
+                                        ),
+                                      )
+                                          : SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: SizedBox(
+                                          //width: double.infinity,
+                                          child: DataTable(
+                                            horizontalMargin: 0,
+                                            columnSpacing: defaultPadding,
+                                            columns: [
+                                              DataColumn(
+                                                label: Text("Product"),
+                                              ),
+                                              DataColumn(
+                                                label: Text("Product Quantity"),
+                                              ),
+                                              DataColumn(
+                                                label: Text(
+                                                    "Product Price"),
+                                              ),
+                                              DataColumn(
+                                                label: Text("Product's Category"),
+                                              ),
+                                              DataColumn(
+                                                label: Text(
+                                                    "Update Product Detail"),
+                                              ),
+                                            ],
+                                            rows: List.generate(
+                                              _productsResponseModel !=
+                                                  null &&
+                                                  _productsResponseModel
+                                                      .data !=
+                                                      null
+                                                  ? _productsResponseModel
+                                                  .data.length
+                                                  : 0,
+                                                  (index) => recentFileDataRow(
+                                                  _productsResponseModel
+                                                      .data[index]),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -444,10 +416,10 @@ class _ProductScreenState extends State<ProductScreen> {
     return DataRow(
       selected: false,
       cells: [
-        DataCell(Text(fileInfo.name),),
+        DataCell(Text(fileInfo.name)),
         DataCell(Text(fileInfo.quantity.toString())),
         DataCell(Text(fileInfo.price)),
-        DataCell(Text(fileInfo.categoryId.name)),
+        DataCell(Text(widget.data.name)),
 
         ///Buttons
         DataCell(Container(
@@ -472,10 +444,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   value: 3,
                 ),
               ],
-            )),
-        onTap: (){
-          createProductDialog(false,fileInfo);
-        }),
+            ))),
       ],
     );
   }

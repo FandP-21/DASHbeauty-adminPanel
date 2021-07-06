@@ -91,7 +91,7 @@ class ProductRepository {
 
   //create Product
   Future<ProductResponseModel> createProduct(CreateProductRequest createProductRequest) async {
-    final response = await _apiProvider.post(Constants.CREATE_PRODUCTS, jsonEncode(createProductRequest));
+    final response = await _apiProvider.postWithToken(Constants.CREATE_PRODUCTS, jsonEncode(createProductRequest));
     return ProductResponseModel.fromJson(response);
   }
 

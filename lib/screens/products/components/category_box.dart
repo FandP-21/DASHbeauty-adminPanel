@@ -17,7 +17,7 @@ class CategoryBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       //width: 200,
-      margin: EdgeInsets.only(left: defaultPadding),
+      margin: EdgeInsets.only(left: defaultPadding, bottom: 20),
       padding: EdgeInsets.symmetric(
         horizontal: defaultPadding,
         vertical: defaultPadding / 2,
