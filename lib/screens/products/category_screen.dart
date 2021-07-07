@@ -5,6 +5,7 @@ import 'package:admin/models/AllUserResponseModel.dart';
 import 'package:admin/models/CategoryResponseModel.dart';
 import 'package:admin/models/ProductsResponseModel.dart';
 import 'package:admin/models/RecentFile.dart';
+import 'package:admin/models/UserResponseModel.dart';
 import 'package:admin/networking/Response.dart';
 import 'package:admin/responsive.dart';
 import 'package:admin/screens/components/default_button.dart';
@@ -231,9 +232,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
       } else {
 
         if(isCreate){
-          _categoryBloc.createCategory();
+          _categoryBloc.createCategory(CreateUserRequest(
+              email: "categoryName",
+              password: "password",
+              confirm_password: "password",
+              first_name: "saa",
+              last_name: "fadf",
+              user_type: 3
+          ));
         }else{
-          _categoryBloc.updateCategory();
+          _categoryBloc.updateCategory("fsdf",CreateProductRequest());
         }
 
 
