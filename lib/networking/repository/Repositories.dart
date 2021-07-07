@@ -11,87 +11,101 @@ import '../ApiProvider.dart';
 
 class LoginRepository {
   ApiProvider _apiProvider = ApiProvider();
+
   Future<LoginResponseModel> loginAdmin(LoginRequest loginRequest) async {
-    final response = await _apiProvider.post(Constants.SING_IN, jsonEncode(loginRequest));
+    final response =
+        await _apiProvider.post(Constants.SING_IN, jsonEncode(loginRequest));
     return LoginResponseModel.fromJson(response);
   }
 }
 
-
 class UserRepository {
   ApiProvider _apiProvider = ApiProvider();
+
   Future<AllUserResponseModel> getAllUser(UserRequest userRequest) async {
-    final response = await _apiProvider.get("${Constants.GET_ALL_USER}?limit=${userRequest.limit}&"
+    final response = await _apiProvider.get(
+        "${Constants.GET_ALL_USER}?limit=${userRequest.limit}&"
         "page_no=${userRequest.page_no}&userRole=${userRequest.userRole}&search=${userRequest.search}");
     return AllUserResponseModel.fromJson(response);
   }
 
   Future<UserResponseModel> createUser(CreateUserRequest userRequest) async {
-    final response = await _apiProvider.postWithToken(Constants.CREATE_USER, jsonEncode(userRequest));
+    final response = await _apiProvider.postWithToken(
+        Constants.CREATE_USER, jsonEncode(userRequest));
     return UserResponseModel.fromJson(response);
   }
 
   Future<UserResponseModel> deleteUser(String userId) async {
-    final response = await _apiProvider.delete(Constants.DELETE_USER_BY_ID + userId);
+    final response =
+        await _apiProvider.delete(Constants.DELETE_USER_BY_ID + userId);
     return UserResponseModel.fromJson(response);
   }
 
-  Future<UserResponseModel> activeDeactiveUser(String userId, bool isActive) async {
-    final response = await _apiProvider.patch(Constants.ACTIVE_DEACTIVE_USER + userId,body: {
-      "status": isActive
-    });
+  Future<UserResponseModel> activeDeactiveUser(
+      String userId, bool isActive) async {
+    final response = await _apiProvider.patch(
+        Constants.ACTIVE_DEACTIVE_USER + userId,
+        body: {"status": isActive});
     return UserResponseModel.fromJson(response);
   }
 
+  Future<UserResponseModel> updateUser(
+      String id, UpdateUserRequest updateUserRequest) async {
+    final response = await _apiProvider
+        .put(Constants.UPDATE_USER + id, body: updateUserRequest);
+    return UserResponseModel.fromJson(response);
+  }
 }
-
 
 class CategoryRepository {
   ApiProvider _apiProvider = ApiProvider();
 
   //get all category
   Future<CategoryResponseModel> getAllCategory(UserRequest userRequest) async {
-    final response = await _apiProvider.get("${Constants.GET_ALL_CATEGORY}?limit=${userRequest.limit}&"
-        "page_no=${userRequest.page_no}&search=${userRequest.search}");
+    final response = await _apiProvider
+        .get("${Constants.GET_ALL_CATEGORY}?limit=${userRequest.limit}&"
+            "page_no=${userRequest.page_no}&search=${userRequest.search}");
     return CategoryResponseModel.fromJson(response);
   }
 
   //pending - create category
-  Future<UserResponseModel> createCategory(CreateUserRequest userRequest) async {
-    final response = await _apiProvider.post(Constants.CREATE_CATEGORY, jsonEncode(userRequest));
-    return UserResponseModel.fromJson(response);
+  Future<CategoryResponseModel> createCategory(
+      CategoryRequest userRequest) async {
+    final response = await _apiProvider.post(
+        Constants.CREATE_CATEGORY, jsonEncode(userRequest));
+    return CategoryResponseModel.fromJson(response);
   }
 
   //delete category
-  Future<BasicResponseModel> deleteCategory(String id) async {
+  Future<CategoryResponseModel> deleteCategory(String id) async {
     final response = await _apiProvider.delete(Constants.DELETE_CATEGORY + id);
-    return BasicResponseModel.fromJson(response);
+    return CategoryResponseModel.fromJson(response);
   }
 
   //pending - update category (pending for multipart image logic)
-  Future<UserResponseModel> updateCategory(String id, bool isActive) async {
-    final response = await _apiProvider.put(Constants.UPDATE_CATEGORY + id,body: {
-      "status": isActive
-    });
-    return UserResponseModel.fromJson(response);
+  Future<CategoryResponseModel> updateCategory(String id, bool isActive) async {
+    final response = await _apiProvider
+        .put(Constants.UPDATE_CATEGORY + id, body: {"status": isActive});
+    return CategoryResponseModel.fromJson(response);
   }
-
 }
-
 
 class ProductRepository {
   ApiProvider _apiProvider = ApiProvider();
 
   //get all Product
   Future<ProductsResponseModel> getAllProduct(UserRequest userRequest) async {
-    final response = await _apiProvider.get("${Constants.GET_ALL_PRODUCTS}?limit=${userRequest.limit}&"
-        "page_no=${userRequest.page_no}&search=${userRequest.search}");
+    final response = await _apiProvider
+        .get("${Constants.GET_ALL_PRODUCTS}?limit=${userRequest.limit}&"
+            "page_no=${userRequest.page_no}&search=${userRequest.search}");
     return ProductsResponseModel.fromJson(response);
   }
 
   //create Product
-  Future<ProductResponseModel> createProduct(CreateProductRequest createProductRequest) async {
-    final response = await _apiProvider.post(Constants.CREATE_PRODUCTS, jsonEncode(createProductRequest));
+  Future<ProductResponseModel> createProduct(
+      CreateProductRequest createProductRequest) async {
+    final response = await _apiProvider.postWithToken(
+        Constants.CREATE_PRODUCTS, jsonEncode(createProductRequest));
     return ProductResponseModel.fromJson(response);
   }
 
@@ -102,9 +116,10 @@ class ProductRepository {
   }
 
   //update Product
-  Future<ProductResponseModel> updateProduct(String id, CreateProductRequest createProductRequest) async {
-    final response = await _apiProvider.put(Constants.UPDATE_PRODUCTS + id,body: createProductRequest);
+  Future<ProductResponseModel> updateProduct(
+      String id, CreateProductRequest createProductRequest) async {
+    final response = await _apiProvider.put(Constants.UPDATE_PRODUCTS + id,
+        body: createProductRequest);
     return ProductResponseModel.fromJson(response);
   }
-
 }

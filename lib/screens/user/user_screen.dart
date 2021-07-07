@@ -38,11 +38,11 @@ class _UserScreenState extends State<UserScreen> {
   String _userType = 'Choose the User Type';
 
   bool _emailValidation = false,
-  _storeIdValidation= false,
-  _passwordValidation= false,
-  _confirmPasswordValidation= false;
+      _storeIdValidation = false,
+      _passwordValidation = false,
+      _confirmPasswordValidation = false;
 
-  AllUserResponseModel userResponseData;
+  AllUserResponseModel ordersResponseData;
 
   int _limit = 10, _pageNo = 1;
 
@@ -50,8 +50,8 @@ class _UserScreenState extends State<UserScreen> {
   void initState() {
     _userBloc = UserBloc();
 
-    _userBloc.getUsers(
-        UserRequest(limit: "$_limit", page_no: "$_pageNo", search: "", userRole: "3"));
+    _userBloc.getUsers(UserRequest(
+        limit: "$_limit", page_no: "$_pageNo", search: "", userRole: "3"));
 
     _userBloc.userStream.listen((event) {
       setState(() {
@@ -61,7 +61,7 @@ class _UserScreenState extends State<UserScreen> {
             break;
           case Status.COMPLETED:
             Constants.stopLoader(context);
-            userResponseData = event.data;
+            ordersResponseData = event.data;
 
             break;
           case Status.ERROR:
@@ -135,8 +135,8 @@ class _UserScreenState extends State<UserScreen> {
           case Status.COMPLETED:
             Constants.stopLoader(context);
 
-            _userBloc.getUsers(
-                UserRequest(limit: "10", page_no: "1", search: "", userRole: "3"));
+            _userBloc.getUsers(UserRequest(
+                limit: "10", page_no: "1", search: "", userRole: "3"));
 
             break;
           case Status.ERROR:
@@ -152,10 +152,35 @@ class _UserScreenState extends State<UserScreen> {
       });
     });
 
+    _userBloc.updateUserStream.listen((event) {
+      setState(() {
+        switch (event.status) {
+          case Status.LOADING:
+            Constants.onLoading(context);
+            break;
+          case Status.COMPLETED:
+            Constants.stopLoader(context);
+            Navigator.pop(context);
+            _userBloc.getUsers(UserRequest(
+                limit: "10", page_no: "1", search: "", userRole: "3"));
+
+            break;
+          case Status.ERROR:
+            print(event.message);
+            Constants.stopLoader(context);
+            if (event.message == "Invalid Request: null") {
+              Constants.showMyDialog("Invalid Credentials.", context);
+            } else {
+              Constants.showMyDialog(event.message, context);
+            }
+            break;
+        }
+      });
+    });
     super.initState();
   }
 
-  void createUserDialog() {
+  void createUserDialog(bool isCreate, UserResponseData fileInfo) {
     _email.text = "";
     _storeId.text = "";
     _password.text = "";
@@ -166,7 +191,7 @@ class _UserScreenState extends State<UserScreen> {
       builder: (BuildContext context) {
 // return object of type Dialog
         return AlertDialog(
-          title: Text("Create New User"),
+          title: Text("${isCreate ? 'Create New' : 'Update' } User"),
           content: Wrap(
             children: <Widget>[
               Padding(
@@ -178,7 +203,8 @@ class _UserScreenState extends State<UserScreen> {
                     border: OutlineInputBorder(),
                     labelText: 'Email',
                     hintText: "Enter User's email",
-                    errorText: _emailValidation ? 'Value Can\'t Be Empty' : null,
+                    errorText:
+                        _emailValidation ? 'Value Can\'t Be Empty' : null,
                   ),
                   textInputAction: TextInputAction.next,
                 ),
@@ -192,7 +218,8 @@ class _UserScreenState extends State<UserScreen> {
                     border: OutlineInputBorder(),
                     labelText: "Store-ID",
                     hintText: "Enter ID given by Reseller",
-                    errorText: _storeIdValidation ? 'Value Can\'t Be Empty' : null,
+                    errorText:
+                        _storeIdValidation ? 'Value Can\'t Be Empty' : null,
                   ),
                   textInputAction: TextInputAction.next,
                 ),
@@ -206,7 +233,8 @@ class _UserScreenState extends State<UserScreen> {
                     border: OutlineInputBorder(),
                     labelText: "Password",
                     hintText: "Enter new user's password",
-                    errorText: _passwordValidation ? 'Value Can\'t Be Empty' : null,
+                    errorText:
+                        _passwordValidation ? 'Value Can\'t Be Empty' : null,
                   ),
                   textInputAction: TextInputAction.next,
                 ),
@@ -220,7 +248,9 @@ class _UserScreenState extends State<UserScreen> {
                     border: OutlineInputBorder(),
                     labelText: "Confirm Password",
                     hintText: "Re-enter the password",
-                    errorText: _confirmPasswordValidation ? 'Value Can\'t Be Empty' : null,
+                    errorText: _confirmPasswordValidation
+                        ? 'Value Can\'t Be Empty'
+                        : null,
                   ),
                   textInputAction: TextInputAction.done,
                 ),
@@ -257,8 +287,8 @@ class _UserScreenState extends State<UserScreen> {
                 ),
               ),
               DefaultButton(
-                text: "Add User",
-                press: () => validateInputs(),
+                text: isCreate ? 'Add' : 'Update' + "User",
+                press: () => validateInputs(isCreate ?true:false,isCreate ?null:fileInfo),
               ),
             ],
           ),
@@ -267,32 +297,35 @@ class _UserScreenState extends State<UserScreen> {
     );
   }
 
-  void validateInputs() {
+  void validateInputs(bool isCreate, UserResponseData fileInfo) {
     setState(() {
       if (_email.text.isEmpty) {
         _emailValidation = true;
-      } else if (_storeId.text.isEmpty) {
+      } /*else if (_storeId.text.isEmpty) {
         _storeIdValidation = true;
       } else if (_password.text.isEmpty) {
         _passwordValidation = true;
       } else if (_confirmPassword.text.isEmpty) {
         _confirmPasswordValidation = true;
-      } else if(_userType == "Choose the User Type"){
-
-      } else {
-        _userBloc.createUser(CreateUserRequest(
-            email: _email.text,
-            password: _password.text,
-            confirm_password: _confirmPassword.text,
-            first_name: _email.text,
-            last_name: _email.text,
-            user_type: _userType == "Reseller User"? 2 : 3));
+      } else if (_userType == "Choose the User Type") {
+      }*/ else {
+        if (isCreate) {
+          _userBloc.createUser(CreateUserRequest(
+              email: _email.text,
+              password: _password.text,
+              confirm_password: _confirmPassword.text,
+              first_name: _email.text,
+              last_name: _email.text,
+              user_type: _userType == "Reseller User" ? 2 : 3));
+        } else {
+          _userBloc.updateUser(fileInfo.userId,UpdateUserRequest(
+              email: _email.text, first_name: "Jon", last_name: "Doe"));
+        }
 
         //to remove dialog
         Navigator.pop(context);
       }
     });
-
   }
 
 /*  @override
@@ -340,7 +373,7 @@ class _UserScreenState extends State<UserScreen> {
           backgroundColor: new Color(0xFFE57373),
           onPressed: () {
             // getImage();
-            createUserDialog();
+            createUserDialog(true,null);
           }),
       key: MenuController().scaffoldKey,
       //context.read<MenuController>().scaffoldKey,
@@ -359,73 +392,37 @@ class _UserScreenState extends State<UserScreen> {
             Expanded(
               // It takes 5/6 part of the screen
               flex: 5,
-              child: Column(
-                children: [
-                  Header("User", Container()),
-                  SizedBox(height: defaultPadding),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 5,
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(defaultPadding),
-                              decoration: BoxDecoration(
-                                color: secondaryColor,
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(10)),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "User Information",
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1,
-                                  ),
-                                  Responsive.isDesktop(context)
-                                      ? SizedBox(
-                                          width: double.infinity,
-                                          child: DataTable(
-                                            horizontalMargin: 0,
-                                            columnSpacing: defaultPadding,
-                                            columns: [
-                                              DataColumn(
-                                                label: Text("Email"),
-                                              ),
-                                              DataColumn(
-                                                label: Text("Password"),
-                                              ),
-                                              DataColumn(
-                                                label:
-                                                    Text("Attached Store ID"),
-                                              ),
-                                              DataColumn(
-                                                label: Text("Action"),
-                                              ),
-                                              DataColumn(
-                                                label: Text("Delete User"),
-                                              ),
-                                            ],
-                                            rows: List.generate(
-                                              userResponseData != null &&
-                                                      userResponseData.data !=
-                                                          null
-                                                  ? userResponseData
-                                                      .data.length
-                                                  : 0,
-                                              (index) => recentFileDataRow(
-                                                  userResponseData
-                                                      .data[index]),
-                                            ),
-                                          ),
-                                        )
-                                      : SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: SizedBox(
-                                            //width: double.infinity,
+              child: Padding(
+                padding: EdgeInsets.all(defaultPadding),
+                child: Column(
+                  children: [
+                    Header("User", Container()),
+                    SizedBox(height: defaultPadding),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 5,
+                          child: Column(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(defaultPadding),
+                                decoration: BoxDecoration(
+                                  color: secondaryColor,
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10)),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "User Information",
+                                      style:
+                                          Theme.of(context).textTheme.subtitle1,
+                                    ),
+                                    Responsive.isDesktop(context)
+                                        ? SizedBox(
+                                            width: double.infinity,
                                             child: DataTable(
                                               horizontalMargin: 0,
                                               columnSpacing: defaultPadding,
@@ -434,55 +431,99 @@ class _UserScreenState extends State<UserScreen> {
                                                   label: Text("Email"),
                                                 ),
                                                 DataColumn(
-                                                  label: Text("Password"),
+                                                  label: Text("UseId"),
                                                 ),
                                                 DataColumn(
                                                   label:
                                                       Text("Attached Store ID"),
                                                 ),
                                                 DataColumn(
-                                                  label: Text("Create User"),
+                                                  label: Text("Action"),
                                                 ),
                                                 DataColumn(
                                                   label:
                                                       Text("Update User Data"),
                                                 ),
                                                 DataColumn(
-                                                  label: Text("Action"),
-                                                ),
-                                                DataColumn(
                                                   label: Text("Delete User"),
                                                 ),
                                               ],
                                               rows: List.generate(
-                                                userResponseData != null &&
-                                                        userResponseData
+                                                ordersResponseData != null &&
+                                                        ordersResponseData
                                                                 .data !=
                                                             null
-                                                    ? userResponseData
+                                                    ? ordersResponseData
                                                         .data.length
                                                     : 0,
                                                 (index) => recentFileDataRow(
-                                                    userResponseData
+                                                    ordersResponseData
                                                         .data[index]),
                                               ),
                                             ),
+                                          )
+                                        : SingleChildScrollView(
+                                            scrollDirection: Axis.horizontal,
+                                            child: SizedBox(
+                                              //width: double.infinity,
+                                              child: DataTable(
+                                                horizontalMargin: 0,
+                                                columnSpacing: defaultPadding,
+                                                columns: [
+                                                  DataColumn(
+                                                    label: Text("Email"),
+                                                  ),
+                                                  DataColumn(
+                                                    label: Text("UserId"),
+                                                  ),
+                                                  DataColumn(
+                                                    label: Text(
+                                                        "Attached Store ID"),
+                                                  ),
+                                                  DataColumn(
+                                                    label: Text("Create User"),
+                                                  ),
+                                                  DataColumn(
+                                                    label: Text("Action"),
+                                                  ),
+                                                  DataColumn(
+                                                    label: Text(
+                                                        "Update User Data"),
+                                                  ),
+                                                  DataColumn(
+                                                    label: Text("Delete User"),
+                                                  ),
+                                                ],
+                                                rows: List.generate(
+                                                  ordersResponseData != null &&
+                                                          ordersResponseData
+                                                                  .data !=
+                                                              null
+                                                      ? ordersResponseData
+                                                          .data.length
+                                                      : 0,
+                                                  (index) => recentFileDataRow(
+                                                      ordersResponseData
+                                                          .data[index]),
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            if (Responsive.isMobile(context))
-                              SizedBox(height: defaultPadding),
-                          ],
+                              if (Responsive.isMobile(context))
+                                SizedBox(height: defaultPadding),
+                            ],
+                          ),
                         ),
-                      ),
-                      if (!Responsive.isMobile(context))
-                        SizedBox(width: defaultPadding),
-                      // On Mobile means if the screen is less than 850 we dont want to show it
-                    ],
-                  )
-                ],
+                        if (!Responsive.isMobile(context))
+                          SizedBox(width: defaultPadding),
+                        // On Mobile means if the screen is less than 850 we dont want to show it
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ],
@@ -495,8 +536,12 @@ class _UserScreenState extends State<UserScreen> {
     return DataRow(
       cells: [
         DataCell(Text(fileInfo.email)),
-        DataCell(Text(fileInfo.email)),
-        DataCell(Text(fileInfo.email)),
+        DataCell(Text(fileInfo.userId)),
+        DataCell(Text(fileInfo.storeId != null
+            ? fileInfo.storeId
+            : "Store-ID is not given")),
+
+        ///Buttons
 
         DataCell(Container(
           height: 30,
@@ -520,6 +565,21 @@ class _UserScreenState extends State<UserScreen> {
                 }
               });
             },
+          ),
+        )),
+        DataCell(Container(
+          height: 30,
+          width: 80,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10), color: Colors.green),
+          child: TextButton(
+            onPressed: () {
+              createUserDialog(false,fileInfo);
+            },
+            child: Text(
+              "Update",
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         )),
         DataCell(IconButton(

@@ -37,12 +37,21 @@ class UserBloc {
   Stream<Response<UserResponseModel>> get enableDisableStream =>
       _enableDisableUserController.stream;
 
+  //update user
+  StreamController _updateUserController;
+  StreamSink<Response<UserResponseModel>> get updateUserDataSink =>
+      _updateUserController.sink;
+  Stream<Response<UserResponseModel>> get updateUserStream =>
+      _updateUserController.stream;
+
 
   UserBloc() {
     _UserBlocController = StreamController<Response<AllUserResponseModel>>();
     _UserCreateController = StreamController<Response<UserResponseModel>>();
     _deleteUserController = StreamController<Response<UserResponseModel>>();
     _enableDisableUserController = StreamController<Response<UserResponseModel>>();
+    _updateUserController = StreamController<Response<UserResponseModel>>();
+
     _UserRepository = UserRepository();
   }
 
@@ -114,12 +123,28 @@ class UserBloc {
     }
     return null;
   }
+  //to update User
+  updateUser(String userId, UpdateUserRequest updateUserRequest) async {
 
+    updateUserDataSink.add(Response.loading('Update Product'));
+    try {
+      UserResponseModel userResponseData =
+      await _UserRepository.updateUser(userId, updateUserRequest);
+      print(userResponseData);
+
+      updateUserDataSink.add(Response.completed(userResponseData));
+    } catch (e) {
+      updateUserDataSink.add(Response.error(e.toString()));
+      print(e);
+    }
+    return null;
+  }
 
   dispose() {
     _UserCreateController.close();
     _UserBlocController.close();
     _deleteUserController.close();
     _enableDisableUserController.close();
+    _updateUserController.close();
   }
 }

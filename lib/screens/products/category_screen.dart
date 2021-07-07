@@ -11,6 +11,7 @@ import 'package:admin/responsive.dart';
 import 'package:admin/screens/components/default_button.dart';
 import 'package:admin/screens/components/header.dart';
 import 'package:admin/screens/main/components/side_menu.dart';
+import 'package:admin/screens/products/category_detail_screen.dart';
 import 'package:admin/screens/products/components/category_box.dart';
 import 'package:admin/screens/products/components/create_category_dialog.dart';
 import 'package:flutter/material.dart';
@@ -35,8 +36,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
   PickedFile _imageFile;
 
   bool _categoryValidation = false;
-  
-  int _limit = 10, _pageNo = 1;
+
+  int _limit = 10,
+      _pageNo = 1;
 
   @override
   void initState() {
@@ -44,7 +46,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     ///Get Category
     _categoryBloc
-        .getCategory(UserRequest(limit: "$_limit", page_no: "$_pageNo", search: ""));
+        .getCategory(
+        UserRequest(limit: "$_limit", page_no: "$_pageNo", search: ""));
 
     _categoryBloc.categoryStream.listen((event) {
       setState(() {
@@ -135,10 +138,18 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           if (_categoryResponseModel != null &&
                               _categoryResponseModel.data != null)
                             for (var i = 0;
-                                i < _categoryResponseModel.data.length;
-                                i++)
-                              CategoryBox(_categoryResponseModel.data[i].name,
-                                  _categoryResponseModel.data[i].image),
+                            i < _categoryResponseModel.data.length;
+                            i++)
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) =>
+                                        CategoryDetailScreen(_categoryResponseModel.data[i]),));
+                                },
+                                child: CategoryBox(
+                                    _categoryResponseModel.data[i].name,
+                                    _categoryResponseModel.data[i].image),
+                              ),
                         ],
                       ),
                       SizedBox(height: defaultPadding),
@@ -173,37 +184,36 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     border: OutlineInputBorder(),
                     labelText: "Category Name",
                     hintText: "Enter Category Name",
-                    errorText: _categoryValidation ? 'Value Can\'t Be Empty' : null,
+                    errorText: _categoryValidation
+                        ? 'Value Can\'t Be Empty'
+                        : null,
                   ),
                   textInputAction: TextInputAction.next,
                 ),
               ),
 
-              _imageFile!=null && _imageFile.path!=null?
+              _imageFile != null && _imageFile.path != null ?
               Row(
                 children: [
                   Text(_imageFile.path),
-                  IconButton(onPressed: (){
+                  IconButton(onPressed: () {
                     _imageFile = null;
-                  }, icon: Icon( Icons.highlight_remove, color: Colors.red,))
+                  }, icon: Icon(Icons.highlight_remove, color: Colors.red,))
                 ],
-              ):SizedBox(),
+              ) : SizedBox(),
 
-              IconButton(onPressed: (){
+              IconButton(onPressed: () {
                 getImage();
-              }, icon: Icon( Icons.add_photo_alternate, color: Colors.red,)),
+              }, icon: Icon(Icons.add_photo_alternate, color: Colors.red,)),
+
               DefaultButton(
-                text: "${isCreate ? 'Create New' : 'Update' } Category",
-                press: () => validateInputs(true)
+                text: "Image",
+                press:()=> getImage(),
               ),
-              // DefaultButton(
-              //   text: "Image",
-              //   press:()=> getImage(),
-              // ),
-              // DefaultButton(
-              //   text: " Category",//isCreate ? 'Add' : 'Update' +
-              //   press: () => validateInputs(true),
-              // ),
+              DefaultButton(
+                text: " Category",//isCreate ? 'Add' : 'Update' +
+                press: () => validateInputs(true),
+              ),
             ],
           ),
         );
@@ -212,7 +222,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   Future getImage() async {
-
     final ImagePicker _picker = ImagePicker();
     final pickedFile = await _picker.getImage(source: ImageSource.gallery);
 
@@ -249,7 +258,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
         Navigator.pop(context);
       }
     });
-
   }
 
 }

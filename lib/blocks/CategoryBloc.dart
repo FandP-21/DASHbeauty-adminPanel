@@ -20,32 +20,32 @@ class CategoryBloc {
 
   //create Category
   StreamController _categoryCreateController;
-  StreamSink<Response<UserResponseModel>> get createCategoryDataSink =>
+  StreamSink<Response<CategoryResponseModel>> get createCategoryDataSink =>
       _categoryCreateController.sink;
-  Stream<Response<UserResponseModel>> get createCategoryStream =>
+  Stream<Response<CategoryResponseModel>> get createCategoryStream =>
       _categoryCreateController.stream;
 
   //delete Category
   StreamController _deleteCategoryController;
-  StreamSink<Response<BasicResponseModel>> get deleteCategoryDataSink =>
+  StreamSink<Response<CategoryResponseModel>> get deleteCategoryDataSink =>
       _deleteCategoryController.sink;
-  Stream<Response<BasicResponseModel>> get deleteCategoryStream =>
+  Stream<Response<CategoryResponseModel>> get deleteCategoryStream =>
       _deleteCategoryController.stream;
 
 
   //update Category
   StreamController _updateCategoryController;
-  StreamSink<Response<ProductResponseModel>> get updateCategoryDataSink =>
+  StreamSink<Response<CategoryResponseModel>> get updateCategoryDataSink =>
       _updateCategoryController.sink;
-  Stream<Response<ProductResponseModel>> get updateCategoryStream =>
+  Stream<Response<CategoryResponseModel>> get updateCategoryStream =>
       _updateCategoryController.stream;
 
 
   CategoryBloc() {
     _categoryBlocController = StreamController<Response<CategoryResponseModel>>();
-    _categoryCreateController = StreamController<Response<UserResponseModel>>();
-    _deleteCategoryController = StreamController<Response<BasicResponseModel>>();
-    _updateCategoryController = StreamController<Response<ProductResponseModel>>();
+    _categoryCreateController = StreamController<Response<CategoryResponseModel>>();
+    _deleteCategoryController = StreamController<Response<CategoryResponseModel>>();
+    _updateCategoryController = StreamController<Response<CategoryResponseModel>>();
     _categoryRepository = CategoryRepository();
   }
 
@@ -68,11 +68,11 @@ class CategoryBloc {
 
 
   //to create new Category
-  createCategory(CreateUserRequest createProductRequest) async {
+  createCategory(CategoryRequest createProductRequest) async {
 
     createCategoryDataSink.add(Response.loading('create user'));
     try {
-      UserResponseModel ordersResponseData =
+      CategoryResponseModel ordersResponseData =
       await _categoryRepository.createCategory(createProductRequest);
       print(ordersResponseData);
 
@@ -90,7 +90,7 @@ class CategoryBloc {
 
     deleteCategoryDataSink.add(Response.loading('delete category'));
     try {
-      BasicResponseModel ordersResponseData =
+      CategoryResponseModel ordersResponseData =
       await _categoryRepository.deleteCategory(categoryId);
       print(ordersResponseData);
 
@@ -104,12 +104,12 @@ class CategoryBloc {
 
 
   //to update Category
-  updateCategory(String userId, CreateProductRequest updateProductRequest) async {
+  updateCategory(String caregoryId, CategoryRequest updateProductRequest) async {
 
     updateCategoryDataSink.add(Response.loading('Update category'));
     // try {
-    //   ProductResponseModel ordersResponseData =
-    //   await _categoryRepository.updateCategory(userId, updateProductRequest);
+    //   CategoryResponseModel ordersResponseData =
+    //   await _categoryRepository.updateCategory(caregoryId, updateProductRequest);
     //   print(ordersResponseData);
     //
     //   updateCategoryDataSink.add(Response.completed(ordersResponseData));
@@ -117,7 +117,7 @@ class CategoryBloc {
     //   updateCategoryDataSink.add(Response.error(e.toString()));
     //   print(e);
     // }
-    return null;
+    // return null;
   }
 
 
