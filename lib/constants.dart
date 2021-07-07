@@ -25,6 +25,8 @@ const String CREATE_USER = "/v1/user"; //Create new user by admin
 const String GET_USER_BY_ID = "/v1/user/{id}"; //Create new user by admin
 const String DELETE_USER_BY_ID = "/v1/user/"; //Delete user by admin
 const String ACTIVE_DEACTIVE_USER = "/v1/user/active-deactive-user/"; //Enable disable user by admin
+const String UPDATE_USER = "/v1/user/"; //Enable disable user by admin
+
 
 //category
 const String GET_ALL_CATEGORY = "/v1/category"; //List category by admin

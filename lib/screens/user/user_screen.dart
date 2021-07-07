@@ -38,9 +38,9 @@ class _UserScreenState extends State<UserScreen> {
   String _userType = 'Choose the User Type';
 
   bool _emailValidation = false,
-  _storeIdValidation= false,
-  _passwordValidation= false,
-  _confirmPasswordValidation= false;
+      _storeIdValidation = false,
+      _passwordValidation = false,
+      _confirmPasswordValidation = false;
 
   AllUserResponseModel ordersResponseData;
 
@@ -50,10 +50,10 @@ class _UserScreenState extends State<UserScreen> {
   void initState() {
     _userBloc = UserBloc();
 
-    _userBloc.getUsers(
-        UserRequest(limit: "$_limit", page_no: "$_pageNo", search: "", userRole: "3"));
+    _userBloc.getUsers(UserRequest(
+        limit: "$_limit", page_no: "$_pageNo", search: "", userRole: "3"));
 
-    _userBloc.ordersStream.listen((event) {
+    _userBloc.userStream.listen((event) {
       setState(() {
         switch (event.status) {
           case Status.LOADING:
@@ -86,7 +86,7 @@ class _UserScreenState extends State<UserScreen> {
           case Status.COMPLETED:
             Constants.stopLoader(context);
             _userBloc.getUsers(UserRequest(
-                limit: "10", page_no: "1", search: "", userRole: "2"));
+                limit: "10", page_no: "1", search: "", userRole: "3"));
 
             break;
           case Status.ERROR:
@@ -102,7 +102,7 @@ class _UserScreenState extends State<UserScreen> {
       });
     });
 
-    _userBloc.deleteStream.listen((event) {
+    _userBloc.deleteUserStream.listen((event) {
       setState(() {
         switch (event.status) {
           case Status.LOADING:
@@ -111,7 +111,7 @@ class _UserScreenState extends State<UserScreen> {
           case Status.COMPLETED:
             Constants.stopLoader(context);
             _userBloc.getUsers(UserRequest(
-                limit: "10", page_no: "1", search: "", userRole: "2"));
+                limit: "10", page_no: "1", search: "", userRole: "3"));
             break;
           case Status.ERROR:
             print(event.message);
@@ -135,8 +135,8 @@ class _UserScreenState extends State<UserScreen> {
           case Status.COMPLETED:
             Constants.stopLoader(context);
 
-            _userBloc.getUsers(
-                UserRequest(limit: "10", page_no: "1", search: "", userRole: "3"));
+            _userBloc.getUsers(UserRequest(
+                limit: "10", page_no: "1", search: "", userRole: "3"));
 
             break;
           case Status.ERROR:
@@ -152,10 +152,35 @@ class _UserScreenState extends State<UserScreen> {
       });
     });
 
+    _userBloc.updateUserStream.listen((event) {
+      setState(() {
+        switch (event.status) {
+          case Status.LOADING:
+            Constants.onLoading(context);
+            break;
+          case Status.COMPLETED:
+            Constants.stopLoader(context);
+            Navigator.pop(context);
+            _userBloc.getUsers(UserRequest(
+                limit: "10", page_no: "1", search: "", userRole: "3"));
+
+            break;
+          case Status.ERROR:
+            print(event.message);
+            Constants.stopLoader(context);
+            if (event.message == "Invalid Request: null") {
+              Constants.showMyDialog("Invalid Credentials.", context);
+            } else {
+              Constants.showMyDialog(event.message, context);
+            }
+            break;
+        }
+      });
+    });
     super.initState();
   }
 
-  void createUserDialog() {
+  void createUserDialog(bool isCreate, UserResponseData fileInfo) {
     _email.text = "";
     _storeId.text = "";
     _password.text = "";
@@ -166,135 +191,141 @@ class _UserScreenState extends State<UserScreen> {
       builder: (BuildContext context) {
 // return object of type Dialog
         return AlertDialog(
-          title: Text("Create New User"),
-          content: SingleChildScrollView(
-            child: Wrap(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(15),
-                  child: TextField(
-                    controller: _email,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Email',
-                      hintText: "Enter User's email",
-                      errorText: _emailValidation ? 'Value Can\'t Be Empty' : null,
-                    ),
-                    textInputAction: TextInputAction.next,
+          title: Text("${isCreate ? 'Create New' : 'Update' } User"),
+          content: Wrap(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(15),
+                child: TextField(
+                  controller: _email,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Email',
+                    hintText: "Enter User's email",
+                    errorText:
+                        _emailValidation ? 'Value Can\'t Be Empty' : null,
                   ),
+                  textInputAction: TextInputAction.next,
                 ),
-                Padding(
-                  padding: EdgeInsets.all(15),
-                  child: TextField(
-                    controller: _storeId,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Store-ID",
-                      hintText: "Enter ID given by Reseller",
-                      errorText: _storeIdValidation ? 'Value Can\'t Be Empty' : null,
-                    ),
-                    textInputAction: TextInputAction.next,
+              ),
+              Padding(
+                padding: EdgeInsets.all(15),
+                child: TextField(
+                  controller: _storeId,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Store-ID",
+                    hintText: "Enter ID given by Reseller",
+                    errorText:
+                        _storeIdValidation ? 'Value Can\'t Be Empty' : null,
                   ),
+                  textInputAction: TextInputAction.next,
                 ),
-                Padding(
-                  padding: EdgeInsets.all(15),
-                  child: TextField(
-                    controller: _password,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Password",
-                      hintText: "Enter new user's password",
-                      errorText: _passwordValidation ? 'Value Can\'t Be Empty' : null,
-                    ),
-                    textInputAction: TextInputAction.next,
+              ),
+              Padding(
+                padding: EdgeInsets.all(15),
+                child: TextField(
+                  controller: _password,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Password",
+                    hintText: "Enter new user's password",
+                    errorText:
+                        _passwordValidation ? 'Value Can\'t Be Empty' : null,
                   ),
+                  textInputAction: TextInputAction.next,
                 ),
-                Padding(
-                  padding: EdgeInsets.all(15),
-                  child: TextField(
-                    controller: _confirmPassword,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Confirm Password",
-                      hintText: "Re-enter the password",
-                      errorText: _confirmPasswordValidation ? 'Value Can\'t Be Empty' : null,
-                    ),
-                    textInputAction: TextInputAction.done,
+              ),
+              Padding(
+                padding: EdgeInsets.all(15),
+                child: TextField(
+                  controller: _confirmPassword,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Confirm Password",
+                    hintText: "Re-enter the password",
+                    errorText: _confirmPasswordValidation
+                        ? 'Value Can\'t Be Empty'
+                        : null,
                   ),
+                  textInputAction: TextInputAction.done,
                 ),
-                Center(
-                  child: DropdownButton<String>(
-                    value: _userType,
-                    icon: Icon(Icons.arrow_drop_down),
-                    iconSize: 30,
-                    //this inicrease the size
-                    elevation: 16,
-                    // this is for underline
-                    // to give an underline us this in your underline inspite of Container
-                    //       Container(
-                    //         height: 2,
-                    //         color: Colors.grey,
-                    //       )
-                    underline: Container(),
-                    onChanged: (String newValue) {
-                      setState(() {
-                        _userType = newValue;
-                      });
-                    },
-                    items: <String>[
-                      'Choose the User Type',
-                      'Reseller User',
-                      'Normal User',
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
+              ),
+              Center(
+                child: DropdownButton<String>(
+                  value: _userType,
+                  icon: Icon(Icons.arrow_drop_down),
+                  iconSize: 30,
+                  //this inicrease the size
+                  elevation: 16,
+                  // this is for underline
+                  // to give an underline us this in your underline inspite of Container
+                  //       Container(
+                  //         height: 2,
+                  //         color: Colors.grey,
+                  //       )
+                  underline: Container(),
+                  onChanged: (String newValue) {
+                    setState(() {
+                      _userType = newValue;
+                    });
+                  },
+                  items: <String>[
+                    'Choose the User Type',
+                    'Reseller User',
+                    'Normal User',
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
                 ),
-                DefaultButton(
-                  text: "Add User",
-                  press: () => validateInputs(),
-                ),
-              ],
-            ),
+              ),
+              DefaultButton(
+                text: isCreate ? 'Add' : 'Update' + "User",
+                press: () => validateInputs(isCreate ?true:false,isCreate ?null:fileInfo),
+              ),
+            ],
           ),
         );
       },
     );
   }
 
-  void validateInputs() {
+  void validateInputs(bool isCreate, UserResponseData fileInfo) {
     setState(() {
       if (_email.text.isEmpty) {
         _emailValidation = true;
-      } else if (_storeId.text.isEmpty) {
+      } /*else if (_storeId.text.isEmpty) {
         _storeIdValidation = true;
       } else if (_password.text.isEmpty) {
         _passwordValidation = true;
       } else if (_confirmPassword.text.isEmpty) {
         _confirmPasswordValidation = true;
-      } else if(_userType == "Choose the User Type"){
-
-      } else {
-        _userBloc.createUser(CreateUserRequest(
-            email: _email.text,
-            password: _password.text,
-            confirm_password: _confirmPassword.text,
-            first_name: _email.text,
-            last_name: _email.text,
-            user_type: _userType == "Reseller User"? 2 : 3));
+      } else if (_userType == "Choose the User Type") {
+      }*/ else {
+        if (isCreate) {
+          _userBloc.createUser(CreateUserRequest(
+              email: _email.text,
+              password: _password.text,
+              confirm_password: _confirmPassword.text,
+              first_name: _email.text,
+              last_name: _email.text,
+              user_type: _userType == "Reseller User" ? 2 : 3));
+        } else {
+          _userBloc.updateUser(fileInfo.userId,UpdateUserRequest(
+              email: _email.text, first_name: "Jon", last_name: "Doe"));
+        }
 
         //to remove dialog
         Navigator.pop(context);
       }
     });
-
   }
 
 /*  @override
@@ -342,7 +373,7 @@ class _UserScreenState extends State<UserScreen> {
           backgroundColor: new Color(0xFFE57373),
           onPressed: () {
             // getImage();
-            createUserDialog();
+            createUserDialog(true,null);
           }),
       key: MenuController().scaffoldKey,
       //context.read<MenuController>().scaffoldKey,
@@ -362,7 +393,7 @@ class _UserScreenState extends State<UserScreen> {
               // It takes 5/6 part of the screen
               flex: 5,
               child: Padding(
-                padding: const EdgeInsets.all(defaultPadding),
+                padding: EdgeInsets.all(defaultPadding),
                 child: Column(
                   children: [
                     Header("User", Container()),
@@ -378,8 +409,8 @@ class _UserScreenState extends State<UserScreen> {
                                 padding: EdgeInsets.all(defaultPadding),
                                 decoration: BoxDecoration(
                                   color: secondaryColor,
-                                  borderRadius:
-                                      const BorderRadius.all(Radius.circular(10)),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(10)),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -400,17 +431,18 @@ class _UserScreenState extends State<UserScreen> {
                                                   label: Text("Email"),
                                                 ),
                                                 DataColumn(
-                                                  label: Text("Password"),
+                                                  label: Text("UseId"),
                                                 ),
                                                 DataColumn(
                                                   label:
                                                       Text("Attached Store ID"),
                                                 ),
                                                 DataColumn(
-                                                  label: Text("Update User Data"),
+                                                  label: Text("Action"),
                                                 ),
                                                 DataColumn(
-                                                  label: Text("Action"),
+                                                  label:
+                                                      Text("Update User Data"),
                                                 ),
                                                 DataColumn(
                                                   label: Text("Delete User"),
@@ -418,7 +450,8 @@ class _UserScreenState extends State<UserScreen> {
                                               ],
                                               rows: List.generate(
                                                 ordersResponseData != null &&
-                                                        ordersResponseData.data !=
+                                                        ordersResponseData
+                                                                .data !=
                                                             null
                                                     ? ordersResponseData
                                                         .data.length
@@ -441,21 +474,21 @@ class _UserScreenState extends State<UserScreen> {
                                                     label: Text("Email"),
                                                   ),
                                                   DataColumn(
-                                                    label: Text("Password"),
+                                                    label: Text("UserId"),
                                                   ),
                                                   DataColumn(
-                                                    label:
-                                                        Text("Attached Store ID"),
+                                                    label: Text(
+                                                        "Attached Store ID"),
                                                   ),
                                                   DataColumn(
                                                     label: Text("Create User"),
                                                   ),
                                                   DataColumn(
-                                                    label:
-                                                        Text("Update User Data"),
+                                                    label: Text("Action"),
                                                   ),
                                                   DataColumn(
-                                                    label: Text("Action"),
+                                                    label: Text(
+                                                        "Update User Data"),
                                                   ),
                                                   DataColumn(
                                                     label: Text("Delete User"),
@@ -503,25 +536,13 @@ class _UserScreenState extends State<UserScreen> {
     return DataRow(
       cells: [
         DataCell(Text(fileInfo.email)),
-        DataCell(Text(fileInfo.email)),
-        DataCell(Text(fileInfo.email)),
+        DataCell(Text(fileInfo.userId)),
+        DataCell(Text(fileInfo.storeId != null
+            ? fileInfo.storeId
+            : "Store-ID is not given")),
 
         ///Buttons
-        DataCell(Container(
-          height: 30,
-          width: 80,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10), color: Colors.green),
-          child: TextButton(
-            onPressed: () {
-              createUserDialog();
-            },
-            child: Text(
-              "Create",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        )),
+
         DataCell(Container(
           height: 30,
           width: 80,
@@ -544,6 +565,21 @@ class _UserScreenState extends State<UserScreen> {
                 }
               });
             },
+          ),
+        )),
+        DataCell(Container(
+          height: 30,
+          width: 80,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10), color: Colors.green),
+          child: TextButton(
+            onPressed: () {
+              createUserDialog(false,fileInfo);
+            },
+            child: Text(
+              "Update",
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         )),
         DataCell(IconButton(

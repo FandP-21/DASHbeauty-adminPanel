@@ -203,16 +203,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
               IconButton(onPressed: () {
                 getImage();
-              }, icon: Icon(Icons.add_photo_alternate, color: Colors.red,))
+              }, icon: Icon(Icons.add_photo_alternate, color: Colors.red,)),
 
-              // DefaultButton(
-              //   text: "Image",
-              //   press:()=> getImage(),
-              // ),
-              // DefaultButton(
-              //   text: " Category",//isCreate ? 'Add' : 'Update' +
-              //   press: () => validateInputs(true),
-              // ),
+              DefaultButton(
+                text: "Image",
+                press:()=> getImage(),
+              ),
+              DefaultButton(
+                text: " Category",//isCreate ? 'Add' : 'Update' +
+                press: () => validateInputs(true),
+              ),
             ],
           ),
         );

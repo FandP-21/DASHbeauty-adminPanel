@@ -149,133 +149,7 @@ class _ProductScreenState extends State<ProductScreen> {
 
   }
 
-  void createProductDialog(bool isCreate, ProductResponseModel fileInfo) {
-    _productName.text = "";
-    _productPrice.text = "";
-    _productQuantity.text = "";
-    _productCategoryID.text = "";
-    _productDescription.text = "";
-    _productKeyword.text = "";
 
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-
-        return AlertDialog(
-          title: Text("${isCreate ? 'Create New' : 'Update' } Product"),
-          content: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: TextField(
-                  controller: _productName,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: isCreate ?"Product Name":fileInfo.name,
-                    hintText: "Enter Product Name",
-                    errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
-                  ),
-                  textInputAction: TextInputAction.next,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: TextField(
-                  controller: _productCategoryID,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: isCreate ?"Product Category": fileInfo.categoryId.toString(),
-                    hintText: "Enter Product Category ID",
-                    errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
-                  ),
-                  textInputAction: TextInputAction.next,
-                ),
-              ),
-              Row(
-                children: [
-                  Flexible(
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: TextField(
-                        controller: _productPrice,
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText:isCreate ? "Product Price":fileInfo.price.toString(),
-                          hintText: "Enter Product Price",
-                          errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
-                        ),
-                        textInputAction: TextInputAction.next,
-                      ),
-                    ),
-                  ),
-                  Flexible(
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: TextField(
-                        controller: _productQuantity,
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: isCreate ?"Product Quantity":fileInfo.quantity.toString(),
-                          hintText: "Enter Product Quantity",
-                          errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
-                        ),
-                        textInputAction: TextInputAction.next,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              
-
-              Padding(
-                padding: EdgeInsets.all(15),
-                child: TextField(
-                  controller: _productDescription,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: isCreate ?"Product Description":fileInfo.description,
-                    hintText: "Enter Product Description",
-                    errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
-                  ),
-                  textInputAction: TextInputAction.next,
-                ),
-              ),
-
-              Padding(
-                padding: EdgeInsets.all(15),
-                child: TextField(
-                  controller: _productKeyword,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: isCreate ?"Product Keyword":fileInfo.keywords,
-                    hintText: "Enter Keyword for better search",
-                    errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
-                  ),
-                  textInputAction: TextInputAction.next,
-                ),
-              ),
-
-              DefaultButton(
-                text: isCreate ? 'Add' : 'Update' +" Product",
-                press: () => validateInputs(isCreate ?true:false,isCreate ?null:fileInfo),
-              ),
-
-            ],
-          ),
-        );
-      },
-    );
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -444,7 +318,7 @@ class _ProductScreenState extends State<ProductScreen> {
     return DataRow(
       selected: false,
       cells: [
-        DataCell(Text(fileInfo.name),),
+        DataCell(Text(fileInfo.name), onTap: (){productInfoDialog(fileInfo);}),
         DataCell(Text(fileInfo.quantity.toString())),
         DataCell(Text(fileInfo.price)),
         DataCell(Text(fileInfo.categoryId.name)),
@@ -477,6 +351,248 @@ class _ProductScreenState extends State<ProductScreen> {
           createProductDialog(false,fileInfo);
         }),
       ],
+    );
+  }
+
+  void createProductDialog(bool isCreate, ProductResponseModel fileInfo) {
+    _productName.text = "";
+    _productPrice.text = "";
+    _productQuantity.text = "";
+    _productCategoryID.text = "";
+    _productDescription.text = "";
+    _productKeyword.text = "";
+
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+
+        return AlertDialog(
+          title: Text("${isCreate ? 'Create New' : 'Update' } Product"),
+          content: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: TextField(
+                  controller: _productName,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: isCreate ?"Product Name":fileInfo.name,
+                    hintText: "Enter Product Name",
+                    errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
+                  ),
+                  textInputAction: TextInputAction.next,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: TextField(
+                  controller: _productCategoryID,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: isCreate ?"Product Category": fileInfo.categoryId.toString(),
+                    hintText: "Enter Product Category ID",
+                    errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
+                  ),
+                  textInputAction: TextInputAction.next,
+                ),
+              ),
+              Row(
+                children: [
+                  Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: TextField(
+                        controller: _productPrice,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText:isCreate ? "Product Price":fileInfo.price.toString(),
+                          hintText: "Enter Product Price",
+                          errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
+                        ),
+                        textInputAction: TextInputAction.next,
+                      ),
+                    ),
+                  ),
+                  Flexible(
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: TextField(
+                        controller: _productQuantity,
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: isCreate ?"Product Quantity":fileInfo.quantity.toString(),
+                          hintText: "Enter Product Quantity",
+                          errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
+                        ),
+                        textInputAction: TextInputAction.next,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+
+
+              Padding(
+                padding: EdgeInsets.all(15),
+                child: TextField(
+                  controller: _productDescription,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: isCreate ?"Product Description":fileInfo.description,
+                    hintText: "Enter Product Description",
+                    errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
+                  ),
+                  textInputAction: TextInputAction.next,
+                ),
+              ),
+
+              Padding(
+                padding: EdgeInsets.all(15),
+                child: TextField(
+                  controller: _productKeyword,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: isCreate ?"Product Keyword":fileInfo.keywords,
+                    hintText: "Enter Keyword for better search",
+                    errorText: _productValidation ? 'Value Can\'t Be Empty' : null,
+                  ),
+                  textInputAction: TextInputAction.next,
+                ),
+              ),
+
+              DefaultButton(
+                text: isCreate ? 'Add' : 'Update' +" Product",
+                press: () => validateInputs(isCreate ?true:false,isCreate ?null:fileInfo),
+              ),
+
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void productInfoDialog(ProductResponseModel fileInfo) {
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+
+        return AlertDialog(
+          title: Row(
+            children: [
+              Text("${fileInfo.name} Details"),
+              SizedBox(width: 100,),
+              Text("Product Id: ${fileInfo.id}",),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(height: 50,),
+                //Image.network(fileInfo.productImages),
+                Text("Description"),
+                SizedBox(height: 10,),
+                Container(padding: EdgeInsets.all(15),
+                  width: 500,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.grey)
+                  ),
+                  child: Text(fileInfo.description),
+                ),
+                SizedBox(height: 50,),
+                Row(
+                  children: [
+                    Column(
+                      children: [
+                        Text("Quantity"), SizedBox(height: 10,),
+                        Container(padding: EdgeInsets.all(15),
+                          width: 100,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey)
+                          ),
+                          child: Text(fileInfo.quantity.toString()),
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 50,),
+                    Column(
+                      children: [
+                        Text("Price"), SizedBox(height: 10,),
+                        Container(
+                          padding: EdgeInsets.all(15),
+                          width: 100,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey)
+                          ),
+                          child: Text(fileInfo.price),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: 50,),
+                Text("Keywords"),SizedBox(height: 10,),
+                Container(padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.grey)
+                  ),
+                  child: Text(fileInfo.keywords),
+                ),
+                SizedBox(height: 50,),
+                Row(
+                  children: [
+                    Column(
+                      children: [
+                        Text("Created Time"),SizedBox(height: 10,),
+                        Container(padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey)
+                          ),
+                          child: Text(fileInfo.createTime.toString()),
+                        ),
+
+                      ],
+                    ),
+                    SizedBox(width: 50,),
+                    Column(
+                      children: [
+                        Text("Updated Time"),
+                     SizedBox(height: 10,),
+                        Container(padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey)
+                          ),
+                          child: Text(fileInfo.updateTime.toString()),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
