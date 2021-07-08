@@ -37,16 +37,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   bool _categoryValidation = false;
 
-  int _limit = 10,
-      _pageNo = 1;
+  int _limit = 10, _pageNo = 1;
 
   @override
   void initState() {
     _categoryBloc = CategoryBloc();
 
     ///Get Category
-    _categoryBloc
-        .getCategory(
+    _categoryBloc.getCategory(
         UserRequest(limit: "$_limit", page_no: "$_pageNo", search: ""));
 
     _categoryBloc.categoryStream.listen((event) {
@@ -82,7 +80,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
           case Status.COMPLETED:
             Constants.stopLoader(context);
             Navigator.pop(context);
-            _categoryBloc.getCategory(UserRequest(limit: "10", page_no: "1", search: ""));
+            _categoryBloc.getCategory(
+                UserRequest(limit: "10", page_no: "1", search: ""));
             break;
           case Status.ERROR:
             print(event.message);
@@ -107,7 +106,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           child: new Icon(Icons.add),
           backgroundColor: new Color(0xFFE57373),
           onPressed: () {
-            createCategoryDialog(true);
+            createCategoryDialog(true,null);
           }),
       key: MenuController().scaffoldKey,
       //context.read<MenuController>().scaffoldKey,
@@ -138,17 +137,21 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           if (_categoryResponseModel != null &&
                               _categoryResponseModel.data != null)
                             for (var i = 0;
-                            i < _categoryResponseModel.data.length;
-                            i++)
+                                i < _categoryResponseModel.data.length;
+                                i++)
                               InkWell(
                                 onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(
-                                    builder: (context) =>
-                                        CategoryDetailScreen(_categoryResponseModel.data[i]),));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            CategoryDetailScreen(
+                                                _categoryResponseModel.data[i]),
+                                      ));
                                 },
                                 child: CategoryBox(
-                                    _categoryResponseModel.data[i].name,
-                                    _categoryResponseModel.data[i].image),
+                                    _categoryResponseModel.data[i]/*.name,
+                                    _categoryResponseModel.data[i].image*/, this.createCategoryDialog),
                               ),
                         ],
                       ),
@@ -164,15 +167,20 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
-  void createCategoryDialog(bool isCreate) {
-    _categoryName.text = "";
+  void createCategoryDialog(bool isCreate,Datum data) {
+
+    if(data != null){
+      _categoryName.text = data.name;
+      // _imageFile = data.image;
+    }
+
+    // _categoryName.text = "";
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-
         return AlertDialog(
-          title: Text("${isCreate ? 'Create New' : 'Update' } Category"),
+          title: Text("${isCreate ? 'Create New' : 'Update'} Category"),
           content: Wrap(
             children: <Widget>[
               Padding(
@@ -184,34 +192,41 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     border: OutlineInputBorder(),
                     labelText: "Category Name",
                     hintText: "Enter Category Name",
-                    errorText: _categoryValidation
-                        ? 'Value Can\'t Be Empty'
-                        : null,
+                    errorText:
+                        _categoryValidation ? 'Value Can\'t Be Empty' : null,
                   ),
                   textInputAction: TextInputAction.next,
                 ),
               ),
-
-              _imageFile != null && _imageFile.path != null ?
-              Row(
-                children: [
-                  Text(_imageFile.path),
-                  IconButton(onPressed: () {
-                    _imageFile = null;
-                  }, icon: Icon(Icons.highlight_remove, color: Colors.red,))
-                ],
-              ) : SizedBox(),
-
-              IconButton(onPressed: () {
-                getImage();
-              }, icon: Icon(Icons.add_photo_alternate, color: Colors.red,)),
-
+              _imageFile != null && _imageFile.path != null
+                  ? Row(
+                      children: [
+                        Text(_imageFile.path),
+                        IconButton(
+                            onPressed: () {
+                              _imageFile = null;
+                            },
+                            icon: Icon(
+                              Icons.highlight_remove,
+                              color: Colors.red,
+                            ))
+                      ],
+                    )
+                  : SizedBox(),
+              IconButton(
+                  onPressed: () {
+                    getImage();
+                  },
+                  icon: Icon(
+                    Icons.add_photo_alternate,
+                    color: Colors.red,
+                  )),
               DefaultButton(
                 text: "Image",
-                press:()=> getImage(),
+                press: () => getImage(),
               ),
               DefaultButton(
-                text: " Category",//isCreate ? 'Add' : 'Update' +
+                text: "${isCreate ? 'Add' : 'Update'} + Category",
                 press: () => validateInputs(true),
               ),
             ],
@@ -239,25 +254,24 @@ class _CategoryScreenState extends State<CategoryScreen> {
       if (_categoryName.text.isEmpty) {
         _categoryValidation = true;
       } else {
-
-        if(isCreate){
-          _categoryBloc.createCategory(CreateUserRequest(
-              email: "categoryName",
+        if (isCreate) {
+          _categoryBloc.createCategory(CategoryRequest(
+            image: "",
+            name: "",
+            /*email: "categoryName",
               password: "password",
               confirm_password: "password",
               first_name: "saa",
               last_name: "fadf",
-              user_type: 3
+              user_type: 3*/
           ));
-        }else{
-          _categoryBloc.updateCategory("fsdf",CreateProductRequest());
+        } else {
+          _categoryBloc.updateCategory("fsdf", CategoryRequest());
         }
-
 
         //to remove dialog
         Navigator.pop(context);
       }
     });
   }
-
 }

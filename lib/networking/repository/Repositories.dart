@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:admin/models/AdminDashboardResponse.dart';
 import 'package:admin/models/AllUserResponseModel.dart';
 import 'package:admin/models/BasicResponseModel.dart';
 import 'package:admin/models/CategoryResponseModel.dart';
@@ -8,6 +9,16 @@ import 'package:admin/constants.dart' as Constants;
 import 'package:admin/models/ProductsResponseModel.dart';
 import 'package:admin/models/UserResponseModel.dart';
 import '../ApiProvider.dart';
+
+class AdminRepository {
+  ApiProvider _apiProvider = ApiProvider();
+
+  Future<AdminDashBoardResponse> adminDashboard() async {
+    final response =
+    await _apiProvider.get(Constants.ADMIN_DASHBOARD);
+    return AdminDashBoardResponse.fromJson(response);
+  }
+}
 
 class LoginRepository {
   ApiProvider _apiProvider = ApiProvider();

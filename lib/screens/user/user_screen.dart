@@ -35,7 +35,7 @@ class _UserScreenState extends State<UserScreen> {
   TextEditingController _storeId = new TextEditingController(text: "");
   TextEditingController _password = new TextEditingController(text: "");
   TextEditingController _confirmPassword = new TextEditingController(text: "");
-  String _userType = 'Choose the User Type';
+  // String _userType = 'Choose the User Type';
 
   bool _emailValidation = false,
       _storeIdValidation = false,
@@ -255,37 +255,37 @@ class _UserScreenState extends State<UserScreen> {
                   textInputAction: TextInputAction.done,
                 ),
               ),
-              Center(
-                child: DropdownButton<String>(
-                  value: _userType,
-                  icon: Icon(Icons.arrow_drop_down),
-                  iconSize: 30,
-                  //this inicrease the size
-                  elevation: 16,
-                  // this is for underline
-                  // to give an underline us this in your underline inspite of Container
-                  //       Container(
-                  //         height: 2,
-                  //         color: Colors.grey,
-                  //       )
-                  underline: Container(),
-                  onChanged: (String newValue) {
-                    setState(() {
-                      _userType = newValue;
-                    });
-                  },
-                  items: <String>[
-                    'Choose the User Type',
-                    'Reseller User',
-                    'Normal User',
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
+              // Center(
+              //   child: DropdownButton<String>(
+              //     value: _userType,
+              //     icon: Icon(Icons.arrow_drop_down),
+              //     iconSize: 30,
+              //     //this inicrease the size
+              //     elevation: 16,
+              //     // this is for underline
+              //     // to give an underline us this in your underline inspite of Container
+              //     //       Container(
+              //     //         height: 2,
+              //     //         color: Colors.grey,
+              //     //       )
+              //     underline: Container(),
+              //     onChanged: (String newValue) {
+              //       setState(() {
+              //         _userType = newValue;
+              //       });
+              //     },
+              //     items: <String>[
+              //       'Choose the User Type',
+              //       'Reseller User',
+              //       'Normal User',
+              //     ].map<DropdownMenuItem<String>>((String value) {
+              //       return DropdownMenuItem<String>(
+              //         value: value,
+              //         child: Text(value),
+              //       );
+              //     }).toList(),
+              //   ),
+              // ),
               DefaultButton(
                 text: isCreate ? 'Add' : 'Update' + "User",
                 press: () => validateInputs(isCreate ?true:false,isCreate ?null:fileInfo),
@@ -316,7 +316,7 @@ class _UserScreenState extends State<UserScreen> {
               confirm_password: _confirmPassword.text,
               first_name: _email.text,
               last_name: _email.text,
-              user_type: _userType == "Reseller User" ? 2 : 3));
+              user_type: /*_userType == "Reseller User" ? 2 :*/ 3));
         } else {
           _userBloc.updateUser(fileInfo.userId,UpdateUserRequest(
               email: _email.text, first_name: "Jon", last_name: "Doe"));

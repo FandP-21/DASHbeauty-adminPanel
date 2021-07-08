@@ -230,37 +230,37 @@ class _ResellerScreenState extends State<ResellerScreen> {
                   textInputAction: TextInputAction.done,
                 ),
               ),
-              Center(
-                child: DropdownButton<String>(
-                  value: _userType,
-                  icon: Icon(Icons.arrow_drop_down),
-                  iconSize: 30,
-                  //this inicrease the size
-                  elevation: 16,
-                  // this is for underline
-                  // to give an underline us this in your underline inspite of Container
-                  //       Container(
-                  //         height: 2,
-                  //         color: Colors.grey,
-                  //       )
-                  underline: Container(),
-                  onChanged: (String newValue) {
-                    setState(() {
-                      _userType = newValue;
-                    });
-                  },
-                  items: <String>[
-                    'Choose the User Type',
-                    'Reseller User',
-                    'Normal User',
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
+              // Center(
+              //   child: DropdownButton<String>(
+              //     value: _userType,
+              //     icon: Icon(Icons.arrow_drop_down),
+              //     iconSize: 30,
+              //     //this inicrease the size
+              //     elevation: 16,
+              //     // this is for underline
+              //     // to give an underline us this in your underline inspite of Container
+              //     //       Container(
+              //     //         height: 2,
+              //     //         color: Colors.grey,
+              //     //       )
+              //     underline: Container(),
+              //     onChanged: (String newValue) {
+              //       setState(() {
+              //         _userType = newValue;
+              //       });
+              //     },
+              //     items: <String>[
+              //       'Choose the User Type',
+              //       'Reseller User',
+              //       'Normal User',
+              //     ].map<DropdownMenuItem<String>>((String value) {
+              //       return DropdownMenuItem<String>(
+              //         value: value,
+              //         child: Text(value),
+              //       );
+              //     }).toList(),
+              //   ),
+              // ),
               DefaultButton(
                 text: isCreate ? 'Add' : 'Update' + "Reseller",
                 press: () => validateInputs(
@@ -295,7 +295,7 @@ class _ResellerScreenState extends State<ResellerScreen> {
               confirm_password: _confirmPassword.text,
               first_name: _email.text,
               last_name: _email.text,
-              user_type: _userType == "Reseller User" ? 2 : 3));
+              user_type: 2 /*_userType == "Reseller User" ? 2 : 3*/));
         }else{
           _userBloc.updateUser(fileInfo.userId,UpdateUserRequest(
               email: _email.text,

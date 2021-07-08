@@ -19,6 +19,9 @@ const String NO_INTERNET = "No Internet";
 //api end points
 const String SING_IN = "/v1/auth/backend-signin";//Admin login
 
+//super admin
+const String ADMIN_DASHBOARD = "/v1/dashboard";//Admin dashboard
+
 //user
 const String GET_ALL_USER = "/v1/user"; //List user by admin
 const String CREATE_USER = "/v1/user"; //Create new user by admin

@@ -1,3 +1,4 @@
+import 'package:admin/models/CategoryResponseModel.dart';
 import 'package:admin/screens/components/default_button.dart';
 import 'package:flutter/material.dart';
 
@@ -6,10 +7,12 @@ import '../../../responsive.dart';
 
 class CategoryBox extends StatelessWidget {
 
-  String categoryName;
-  String imageUrl;
+  Datum data;
+  // String categoryName;
+  // String imageUrl;
+  final Function callback;
 
-  CategoryBox(this.categoryName, this.imageUrl,{
+  CategoryBox(this.data, this.callback,{
     Key key,
   }) : super(key: key);
 
@@ -31,12 +34,12 @@ class CategoryBox extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           if (!Responsive.isMobile(context))
-            Image.network(imageUrl, height: Responsive.isDesktop(context)? 80 : 40, width:Responsive.isDesktop(context)? 80 : 40,),
+            Image.network(data.image, height: Responsive.isDesktop(context)? 80 : 40, width:Responsive.isDesktop(context)? 80 : 40,),
             //Image(image: NetworkImage(imageUrl), height: Responsive.isDesktop(context)? 80 : 40, width:Responsive.isDesktop(context)? 80 : 40,),
             Padding(
               padding:
               const EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-              child: Text(categoryName),
+              child: Text(data.name),
             ),
           Container(
             //width: 150,
@@ -44,7 +47,9 @@ class CategoryBox extends StatelessWidget {
             child: FlatButton(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               color: kPrimaryColor,
-              onPressed: (){},
+              onPressed: (){
+                this.callback(false,data);
+              },
               child: Text(
                 "Update Category",
                 style: TextStyle(
