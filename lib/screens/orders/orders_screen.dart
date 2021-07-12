@@ -1,3 +1,4 @@
+import 'package:admin/blocks/OrderBloc.dart';
 import 'package:admin/blocks/ProductBloc.dart';
 import 'package:admin/controllers/MenuController.dart';
 import 'package:admin/models/AllUserResponseModel.dart';
@@ -15,6 +16,9 @@ import '../../constants.dart';
 
 class OrderScreen extends StatefulWidget {
   static String routeName = "/order_screen";
+  AllUserResponseModel userResponseModel;
+
+  OrderScreen({this.userResponseModel});
 
   @override
   _OrderScreenState createState() => _OrderScreenState();
@@ -22,18 +26,17 @@ class OrderScreen extends StatefulWidget {
 
 class _OrderScreenState extends State<OrderScreen> {
 
-  ProductBloc _bloc;
+  OrderBloc _bloc;
   ProductsResponseModel _productsResponseModel;
 
   @override
   void initState() {
-    _bloc = ProductBloc();
+    _bloc = OrderBloc();
 
-    _bloc.getProducts(
-        UserRequest(limit: "10", page_no: "1", search: ""));
+    _bloc.getAllOrders(UserRequest(limit: "10", page_no: "1", search: ""));
 
 
-    _bloc.productStream.listen((event) {
+    _bloc.allOrderStream.listen((event) {
       setState(() {
         switch (event.status) {
           case Status.LOADING:
@@ -41,7 +44,7 @@ class _OrderScreenState extends State<OrderScreen> {
             break;
           case Status.COMPLETED:
             Constants.stopLoader(context);
-            _productsResponseModel = event.data;
+            // _productsResponseModel = event.data;
             break;
           case Status.ERROR:
             print(event.message);
@@ -196,6 +199,7 @@ class _OrderScreenState extends State<OrderScreen> {
       ),
     );
   }
+
   DataRow recentFileDataRow(ProductResponseModel fileInfo) {
     return DataRow(
       selected: false,

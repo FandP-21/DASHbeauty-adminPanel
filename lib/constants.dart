@@ -22,6 +22,9 @@ const String SING_IN = "/v1/auth/backend-signin";//Admin login
 //super admin
 const String ADMIN_DASHBOARD = "/v1/dashboard";//Admin dashboard
 
+//super cart
+const String ADMIN_CART = "/v1/cart";//create
+
 //user
 const String GET_ALL_USER = "/v1/user"; //List user by admin
 const String CREATE_USER = "/v1/user"; //Create new user by admin
@@ -37,11 +40,27 @@ const String CREATE_CATEGORY = "/v1/category"; //Create new category by admin
 const String DELETE_CATEGORY = "/v1/category/"; //Delete category by admin
 const String UPDATE_CATEGORY = "/v1/category/"; //update category by admin
 
-//category
+//product
 const String GET_ALL_PRODUCTS = "/v1/products"; //List products by admin and reseller
 const String CREATE_PRODUCTS = "/v1/products"; //Create new products by admin and reseller
 const String DELETE_PRODUCTS = "/v1/products/"; //Delete products by admin and reseller
 const String UPDATE_PRODUCTS = "/v1/products/"; //update products by admin and reseller
+
+//order
+const String GET_ORDER_BY_UESR = "/v1/orders/user-orders/"; //order by admin with userId
+const String GET_ORDERS = "/v1/orders"; //order by admin
+
+
+//favourite
+const String GET_FAVOURITE = "/v1/Favourite";//get, post and delete
+
+//address
+const String GET_ADDRESS = "/v1/user-address";//get all address by user
+
+//promo
+const String GET_PROMO = "/v1/promo";//get promo codes
+
+
 
 // Form Error
 final RegExp emailValidatorRegExp =

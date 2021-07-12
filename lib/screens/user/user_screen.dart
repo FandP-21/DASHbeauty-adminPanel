@@ -1,3 +1,4 @@
+import 'package:admin/blocks/OrderBloc.dart';
 import 'package:admin/blocks/UserBloc.dart';
 import 'package:admin/controllers/MenuController.dart';
 import 'package:admin/models/AllUserResponseModel.dart';
@@ -20,6 +21,7 @@ import '../../constants.dart';
 import 'components/user_info.dart';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:admin/screens/orders/orders_screen.dart';
 
 class UserScreen extends StatefulWidget {
   static String routeName = "/user_screen";
@@ -30,6 +32,7 @@ class UserScreen extends StatefulWidget {
 
 class _UserScreenState extends State<UserScreen> {
   UserBloc _userBloc;
+  OrderBloc _orderBloc;
 
   TextEditingController _email = new TextEditingController(text: "");
   TextEditingController _storeId = new TextEditingController(text: "");
@@ -42,13 +45,15 @@ class _UserScreenState extends State<UserScreen> {
       _passwordValidation = false,
       _confirmPasswordValidation = false;
 
-  AllUserResponseModel ordersResponseData;
+  AllUserResponseModel _usersResponseData;
 
   int _limit = 10, _pageNo = 1;
 
   @override
   void initState() {
     _userBloc = UserBloc();
+    _orderBloc = OrderBloc();
+
 
     _userBloc.getUsers(UserRequest(
         limit: "$_limit", page_no: "$_pageNo", search: "", userRole: "3"));
@@ -61,7 +66,7 @@ class _UserScreenState extends State<UserScreen> {
             break;
           case Status.COMPLETED:
             Constants.stopLoader(context);
-            ordersResponseData = event.data;
+            _usersResponseData = event.data;
 
             break;
           case Status.ERROR:
@@ -163,6 +168,31 @@ class _UserScreenState extends State<UserScreen> {
             Navigator.pop(context);
             _userBloc.getUsers(UserRequest(
                 limit: "10", page_no: "1", search: "", userRole: "3"));
+
+            break;
+          case Status.ERROR:
+            print(event.message);
+            Constants.stopLoader(context);
+            if (event.message == "Invalid Request: null") {
+              Constants.showMyDialog("Invalid Credentials.", context);
+            } else {
+              Constants.showMyDialog(event.message, context);
+            }
+            break;
+        }
+      });
+    });
+
+    _orderBloc.orderStream.listen((event) {
+      setState(() {
+        switch (event.status) {
+          case Status.LOADING:
+            Constants.onLoading(context);
+            break;
+          case Status.COMPLETED:
+            Constants.stopLoader(context);
+            Navigator.pop(context);
+            OrderScreen(userResponseModel: _usersResponseData,);
 
             break;
           case Status.ERROR:
@@ -449,15 +479,15 @@ class _UserScreenState extends State<UserScreen> {
                                                 ),
                                               ],
                                               rows: List.generate(
-                                                ordersResponseData != null &&
-                                                        ordersResponseData
+                                                _usersResponseData != null &&
+                                                        _usersResponseData
                                                                 .data !=
                                                             null
-                                                    ? ordersResponseData
+                                                    ? _usersResponseData
                                                         .data.length
                                                     : 0,
                                                 (index) => recentFileDataRow(
-                                                    ordersResponseData
+                                                    _usersResponseData
                                                         .data[index]),
                                               ),
                                             ),
@@ -495,15 +525,15 @@ class _UserScreenState extends State<UserScreen> {
                                                   ),
                                                 ],
                                                 rows: List.generate(
-                                                  ordersResponseData != null &&
-                                                          ordersResponseData
+                                                  _usersResponseData != null &&
+                                                          _usersResponseData
                                                                   .data !=
                                                               null
-                                                      ? ordersResponseData
+                                                      ? _usersResponseData
                                                           .data.length
                                                       : 0,
                                                   (index) => recentFileDataRow(
-                                                      ordersResponseData
+                                                      _usersResponseData
                                                           .data[index]),
                                                 ),
                                               ),

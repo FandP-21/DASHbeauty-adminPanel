@@ -4,6 +4,7 @@ import 'package:admin/models/AdminDashboardResponse.dart';
 import 'package:admin/models/AllUserResponseModel.dart';
 import 'package:admin/models/BasicResponseModel.dart';
 import 'package:admin/models/CategoryResponseModel.dart';
+import 'package:admin/models/CommonRequest.dart';
 import 'package:admin/models/LoginResponseModel.dart';
 import 'package:admin/constants.dart' as Constants;
 import 'package:admin/models/ProductsResponseModel.dart';
@@ -133,4 +134,132 @@ class ProductRepository {
         body: createProductRequest);
     return ProductResponseModel.fromJson(response);
   }
+}
+
+class OrderRepository {
+  ApiProvider _apiProvider = ApiProvider();
+
+  Future<AllUserResponseModel> getAllOrderByUserId(String userId, String limit,String page_no) async {
+    final response = await _apiProvider.get(
+        "${Constants.GET_ORDER_BY_UESR}$userId?limit=$limit&"
+            "page_no=$page_no}");
+    return AllUserResponseModel.fromJson(response);
+  }
+
+  Future<AllUserResponseModel> getAllOrders(UserRequest request) async {
+    final response = await _apiProvider.get(
+        "${Constants.GET_ORDERS}?limit=${request.limit}&page_no=${request.page_no}}");
+    return AllUserResponseModel.fromJson(response);
+  }
+
+}
+
+class FavouriteRepository {
+  ApiProvider _apiProvider = ApiProvider();
+
+  Future<AllUserResponseModel> getFavouriteByUser(CommonRequest request) async {
+    final response = await _apiProvider.get(
+        "${Constants.GET_FAVOURITE}?limit=${request.limit}&page_no=${request.page_no}&search=${request.search}");
+    return AllUserResponseModel.fromJson(response);
+  }
+
+  Future<UserResponseModel> addToFavourite(String productId) async {
+    final response = await _apiProvider.postWithToken(
+        Constants.GET_FAVOURITE, jsonEncode(productId));
+    return UserResponseModel.fromJson(response);
+  }
+
+  Future<UserResponseModel> removeFromFavourite(String productId) async {
+    final response = await _apiProvider.delete("${Constants.GET_FAVOURITE}/$productId");
+    return UserResponseModel.fromJson(response);
+  }
+
+}
+
+class AddressRepository{
+  ApiProvider _apiProvider = ApiProvider();
+
+  Future<AllUserResponseModel> getAddressByUser(CommonRequest request) async {
+    final response = await _apiProvider.get(
+        "${Constants.GET_ADDRESS}?limit=${request.limit}&page_no=${request.page_no}&search=${request.search}");
+    return AllUserResponseModel.fromJson(response);
+  }
+
+  Future<UserResponseModel> createAddressByUser(AddressRequest addressRequest) async {
+    final response = await _apiProvider.postWithToken(
+        Constants.GET_ADDRESS, jsonEncode(addressRequest));
+    return UserResponseModel.fromJson(response);
+  }
+
+  Future<UserResponseModel> updateAddressByUser(String addressId, AddressRequest addressRequest) async {
+    final response = await _apiProvider.put("${Constants.GET_ADDRESS}/$addressId", body: jsonEncode(addressRequest));
+    return UserResponseModel.fromJson(response);
+  }
+
+  Future<UserResponseModel> deleteAddressByUser(String addressId) async {
+    final response = await _apiProvider.delete("${Constants.GET_ADDRESS}/$addressId");
+    return UserResponseModel.fromJson(response);
+  }
+
+  Future<UserResponseModel> getAddressByUserWithAddressId(String addressId) async {
+    final response = await _apiProvider.get("${Constants.GET_ADDRESS}/$addressId");
+    return UserResponseModel.fromJson(response);
+  }
+}
+
+class CartRepository{
+  ApiProvider _apiProvider = ApiProvider();
+
+  Future<AllUserResponseModel> getCart(CommonRequest request) async {
+    final response = await _apiProvider.get(
+        "${Constants.ADMIN_CART}?limit=${request.limit}&page_no=${request.page_no}");
+    return AllUserResponseModel.fromJson(response);
+  }
+
+  Future<UserResponseModel> addToCart(CartRequest request) async {
+    final response = await _apiProvider.postWithToken(
+        Constants.ADMIN_CART, jsonEncode(request));
+    return UserResponseModel.fromJson(response);
+  }
+
+
+  Future<UserResponseModel> updateCart(String id, CartRequest request) async {
+    final response = await _apiProvider.put("${Constants.ADMIN_CART}/$id", body: jsonEncode(request));
+    return UserResponseModel.fromJson(response);
+  }
+
+  Future<UserResponseModel> deleteCart(String userId) async {
+    final response = await _apiProvider.delete("${Constants.ADMIN_CART}/$userId");
+    return UserResponseModel.fromJson(response);
+  }
+
+}
+
+
+class PromoCodeRepository{
+  ApiProvider _apiProvider = ApiProvider();
+
+  Future<AllUserResponseModel> getPromoCodes(CommonRequest request) async {
+    final response = await _apiProvider.get(
+        "${Constants.GET_PROMO}?limit=${request.limit}&page_no=${request.page_no}&search=${request.search}");
+    return AllUserResponseModel.fromJson(response);
+  }
+
+  Future<UserResponseModel> createPromoCode(PromoRequest request) async {
+    final response = await _apiProvider.postWithToken(
+        Constants.GET_PROMO, jsonEncode(request));
+    return UserResponseModel.fromJson(response);
+  }
+
+
+  Future<UserResponseModel> updatePromoCode(String id, PromoRequest request) async {
+    final response = await _apiProvider.put("${Constants.GET_PROMO}/$id", body: jsonEncode(request));
+    return UserResponseModel.fromJson(response);
+  }
+
+  Future<UserResponseModel> deletePromo(String id) async {
+    final response = await _apiProvider.delete("${Constants.GET_PROMO}/$id");
+    return UserResponseModel.fromJson(response);
+  }
+
 }
